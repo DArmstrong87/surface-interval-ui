@@ -2,7 +2,15 @@ import React from 'react';
 import logo from './logo.svg';
 import './App.css';
 
-function App() {
+interface MyButtonProps {
+  /** The text to display inside the button */
+  title: string;
+  /** Whether the button can be interacted with */
+  disabled: boolean;
+}
+
+
+function App({ title, disabled }: MyButtonProps) {
   return (
     <div className="App">
       <header className="App-header">
@@ -19,6 +27,9 @@ function App() {
           Learn React
         </a>
       </header>
+      <body>
+      <button disabled={disabled}>{title}</button>
+      </body>
     </div>
   );
 }
