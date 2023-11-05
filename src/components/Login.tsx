@@ -1,5 +1,4 @@
-import React, { useState } from 'react';
-import Avatar from '@mui/material/Avatar';
+import { useState } from 'react';
 import TextField from '@mui/material/TextField';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Checkbox from '@mui/material/Checkbox';
@@ -7,22 +6,50 @@ import Link from '@mui/material/Link';
 import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
 import { Button, Container, ThemeProvider, Typography, createTheme, CircularProgress } from '@mui/material';
+import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 
+const baseURL = 'http://127.0.0.1:8000/';
 
-function Splash() {
+
+function Login() {
     const defaultTheme = createTheme();
-    const [submitHidden, setSubmitHidden] = useState<boolean>(false)
 
-    const handleSubmit = () => {
+    const navigate = useNavigate();
+    const [submitHidden, setSubmitHidden] = useState<boolean>(false);
+
+    const data = {
+        "username": "danny",
+        "password": "Cu4n5SJYI@9@yL=6"
+    };
+
+    const handleSubmit = (e: any) => {
+        e.preventDefault()
         setSubmitHidden(true)
-
+        let axiosInstance = axios.create({
+            baseURL: baseURL,
+            timeout: 10000,
+            headers: {
+                'Content-Type': 'application/json',
+            }
+        }
+        )
+        axiosInstance.post(`${baseURL}/login`, data)
+            .then(res => {
+                localStorage.setItem("si_token", res.data.token);
+                navigate('/')
+            })
     }
+
 
     return (
         <ThemeProvider theme={defaultTheme}>
+
             <Container maxWidth="xl" fixed sx={{ backgroundColor: "gray" }} >
+
                 <Typography variant="h1" sx={{ color: "white" }}>Welcome to Surface Interval</Typography>
+
                 <Box
                     sx={{
                         marginTop: 8,
@@ -31,9 +58,11 @@ function Splash() {
                         alignItems: 'center',
                     }}
                 >
+
                     <Typography component="h1" variant="h5">
                         Sign in
                     </Typography>
+
                     <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
                         <TextField
                             margin="normal"
@@ -45,6 +74,7 @@ function Splash() {
                             autoComplete="email"
                             autoFocus
                         />
+
                         <TextField
                             margin="normal"
                             required
@@ -55,6 +85,7 @@ function Splash() {
                             id="password"
                             autoComplete="current-password"
                         />
+
                         <FormControlLabel
                             control={<Checkbox value="remember" color="primary" />}
                             label="Remember me"
@@ -75,6 +106,7 @@ function Splash() {
                                 <CircularProgress />
                             </Box>
                         }
+
                         <Grid container>
                             <Grid item xs>
                                 <Link href="#" variant="body2">
@@ -87,11 +119,15 @@ function Splash() {
                                 </Link>
                             </Grid>
                         </Grid>
+
                     </Box>
+
                 </Box>
+
             </Container>
+
         </ThemeProvider>
     );
 }
 
-export default Splash;
+export default Login;

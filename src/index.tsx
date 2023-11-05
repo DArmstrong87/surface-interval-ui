@@ -1,16 +1,20 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
-import Home from './Home';
 import reportWebVitals from './reportWebVitals';
-import Splash from './components/Splash';
+import { BrowserRouter } from 'react-router-dom';
+import { ApplicationViews } from './ApplicationViews';
+
+
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
 );
 root.render(
   <React.StrictMode>
-    <Splash />
+    <BrowserRouter>
+      <ApplicationViews />
+    </BrowserRouter>
   </React.StrictMode>
 );
 
