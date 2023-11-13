@@ -5,7 +5,7 @@ interface Dive {
     id: number;
     date: string;
     gear_set: any;
-    country_state: string;
+    location: string;
     site: string;
     water: string;
     depth: number;
@@ -16,6 +16,7 @@ interface Dive {
     tank_vol: number;
     air_consumption: number;
     favorite: boolean;
+    dive_number: number;
 }
 
 function Dives() {
@@ -29,15 +30,40 @@ function Dives() {
 
     function diveList(dives: Dive[]) {
         return dives.map((dive, index) =>
-            <li key={index} style={{ color: "white" }} >{dive.site}</li>
+            <tr key={index}>
+                <td key={`${index}-num`}>{dive.dive_number}</td>
+                <td key={`${index}-date`}>{dive.date}</td>
+                <td key={`${index}-location`}>{dive.location}</td>
+                <td key={`${index}-site`}>{dive.site}</td>
+                <td key={`${index}-water`}>{dive.water}</td>
+                <td key={`${index}-depth`}>{dive.depth}</td>
+                <td key={`${index}-time`}>{dive.time}</td>
+            </tr>
         )
     }
 
     return (<>
-        <h1 style={{ color: "white" }}>Hello</h1>
-        <ul>
-            {diveList(dives)}
-        </ul>
+        <h1>Hello</h1>
+
+        <table>
+            <thead>
+                <th>
+                    <td>Dive Log</td>
+                </th>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Number</td>
+                    <td>Date</td>
+                    <td>Location</td>
+                    <td>Site</td>
+                    <td>Water</td>
+                    <td>Depth</td>
+                    <td>Time</td>
+                </tr>
+                {diveList(dives)}
+            </tbody>
+        </table>
     </>
     );
 }

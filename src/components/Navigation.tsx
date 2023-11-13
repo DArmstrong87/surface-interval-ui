@@ -44,7 +44,16 @@ export default function ButtonAppBar() {
                             Home
                         </Typography>
                         <Typography variant="h6" component="div" sx={{ flexGrow: 1 }} onClick={() => navTo("dives")}>
-                            Dives
+                            Dive Log
+                        </Typography>
+                        <Typography variant="h6" component="div" sx={{ flexGrow: 1 }} onClick={() => navTo("dives")}>
+                            Dive Plan
+                        </Typography>
+                        <Typography variant="h6" component="div" sx={{ flexGrow: 1 }} onClick={() => navTo("dives")}>
+                            Gear
+                        </Typography>
+                        <Typography variant="h6" component="div" sx={{ flexGrow: 1 }} onClick={() => navTo("dives")}>
+                            Profile
                         </Typography>
                         <Button color="inherit" onClick={logout}>Logout</Button>
                     </Toolbar>

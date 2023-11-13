@@ -21,7 +21,7 @@ function Login() {
 
     const data = {
         "username": "danny",
-        "password": "Cu4n5SJYI@9@yL=6"
+        "password": "123"
     };
 
     const handleSubmit = (e: any) => {
