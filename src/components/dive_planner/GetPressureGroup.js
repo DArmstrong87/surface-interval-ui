@@ -11,7 +11,7 @@ const getPressureGroup = (data) => {
     console.log(pressureGroup)
 }
 
-const depths = [35, 40, 50, 60, 70, 80, 90, 110, 120, 130, 140]
+const depths = [35, 40, 50, 60, 70, 80, 90, 100, 110, 120, 130, 140]
 const MATRIX = [
     /*35*/[10, 19, 25, 29, 32, 36, 40, 44, 48, 52, 57, 62, 67, 73, 79, 85, 92, 100, 108, 117, 127, 139, 152, 168, 188, 205],
     /*40*/[9, 16, 22, 25, 27, 31, 34, 37, 40, 44, 48, 51, 55, 60, 64, 69, 74, 85, 91, 97, 104, 111, 120, 129, 140],
@@ -108,28 +108,45 @@ Pressure Group at end of SI
 Depth
 Time
 */
-// [residual nitrogen time, no decompression limits]
-// Add RNT to actual bottom time
-const residualNitrogenTimeMatrix = [
-    /*35*/[[10,195],[19,186]],
-    /*40*/[]
+// [residual nitrogen time, no decompression limit]
+
+const RNT_NDL_MATRIX = [
+    /*35*/[[10, 195], [19, 186], [25, 180], [29, 176], [32, 173], [36, 169], [40, 165], [44, 161], [48, 157], [52, 153], [57, 148], [62, 143], [67, 138], [73, 132], [79, 126], [85, 120], [92, 113], [100, 105], [108, 97], [117, 88], [127, 78], [139, 66], [152, 53], [168, 37], [188, 17], [205, 0]],
+    /*40*/[[9, 131], [16, 124], [22, 118], [25, 115], [27, 113], [31, 109], [34, 106], [37, 103], [40, 100], [44, 96], [48, 92], [51, 89], [55, 85], [60, 80], [64, 76], [69, 71], [74, 66], [79, 61], [85, 55], [91, 49], [97, 43], [104, 36], [111, 29], [120, 20], [129, 11], [140, 0]],
+    /*50*/[[7, 73], [13, 67], [17, 63], [19, 61], [21, 59], [24, 56], [26, 54], [28, 52], [31, 49], [33, 47], [36, 44], [38, 42], [41, 39], [44, 36], [47, 33], [50, 30], [43, 27], [57, 23], [60, 20], [63, 17], [67, 13], [71, 9], [75, 5], [80, 0]],
+    /*60*/[[6, 49], [11, 44], [14, 41], [16, 39], [17, 38], [19, 36], [21, 34], [23, 32], [25, 30], [27, 28], [29, 26], [31, 24], [33, 22], [35, 20], [37, 18], [39, 16], [42, 13], [44, 11], [47, 8], [49, 6], [52, 3], [54, 1], [55, 0]],
+    /*70*/[[5, 35], [9, 31], [12, 28], [13, 27], [15, 25], [16, 24], [18, 22], [19, 21], [21, 19], [22, 18], [24, 16], [26, 14], [27, 13], [29, 11], [31, 9], [33, 7], [34, 6], [36, 4], [38, 2], [40, 0]],
+    /*80*/[[4, 26], [8, 22], [10, 20], [11, 19], [13, 17], [14, 16], [15, 15], [17, 13], [18, 12], [19, 11], [21, 9], [22, 8], [23, 7], [25, 5], [26, 4], [28, 2], [29, 0], [30, 0]],
+    /*90*/[[4, 21], [7, 18], [9, 16], [10, 15], [11, 14], [12, 13], [13, 12], [15, 10], [16, 9], [17, 8], [18, 7], [19, 6], [21, 4], [22, 3], [23, 2], [24, 0], [25, 0]],
+    /*100*/[[3, 17], [6, 14], [8, 12], [9, 11], [10, 10], [11, 9], [12, 8], [13, 7], [14, 6], [15, 5], [16, 4], [17, 3], [18, 2], [19, 0], [20, 0]],
+    /*110*/[[3, 13], [6, 10], [7, 9], [8, 8], [9, 7], [10, 6], [11, 5], [12, 4], [13, 3], [14, 2], [14, 2], [15, 0], [16, 0]],
+    /*120*/[[3, 10], [5, 8], [6, 7], [7, 6], [8, 5], [9, 4], [10, 3], [11, 2], [12, 0], [12, 0], [13, 0]],
+    /*130*/[[3, 10], [5, 8], [6, 7], [7, 6], [8, 5], [9, 4], [10, 3], [11, 2], [12, 0], [13, 0]]
 ]
 
 const getResidualNitrogenTime = (depth, actualBottomTime, pg) => {
-    console.log("Actual Bottom Time", actualBottomTime)
-
+    const startPressureGroup = String.fromCharCode('A'.charCodeAt(0) + pg)
+    console.log("starting group", startPressureGroup)
+    
+    // Use depth to get [residual nitrogen time, no deco limit] from matrix
     const depthIndex = getDepthIndex(depth)
-    console.log("Depth index", depthIndex)
-    const times = residualNitrogenTimeMatrix[depthIndex]
-    console.log(times)
+    const times = RNT_NDL_MATRIX[depthIndex]
     const rnt_NDL = times[pg]
     const residualNitrogenTime = rnt_NDL[0]
     const noDecoLimit = rnt_NDL[1]
+    const totalBottomTime = actualBottomTime + residualNitrogenTime
+    
+    console.log("Actual Bottom Time", actualBottomTime)
     console.log("Residual Nitrogen Time", residualNitrogenTime)
+    console.log("Total Bottom time", totalBottomTime)
     console.log("No Deco Limit", noDecoLimit)
 
-    console.log("Total Bottom time", actualBottomTime + residualNitrogenTime )
+    if (totalBottomTime > noDecoLimit){
+        console.log("EXCEEDS DECO LIMITS")
+    } else {
+        console.log("Total Bottom time within deco limits")
+    }
 }
 
 
-getResidualNitrogenTime(30, 40, 0)
+getResidualNitrogenTime(55, 25, 14)
