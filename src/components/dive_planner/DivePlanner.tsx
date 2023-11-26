@@ -1,31 +1,42 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { planDive } from './PlanDive';
+import { AIR, EANx32, EANx36 } from './DiveTables';
 
 
 export interface DiveFormState {
     depth: number;
     time: number;
     surfaceInterval: number;
+    air: string;
 }
 
 export interface DivePlan {
-    depth: number,
-    startingPressureGroup: string,
-    startingPressureIndex: number,
-    postDivePressureGroup: string,
-    postDivePressureIndex: number,
-    safetyStopRequired: boolean,
-    minToNDL: number,
-    surfaceInterval: number,
-    actualBottomTime: number,
-    residualNitrogenTime: number,
-    totalBottomTime: number,
+    depth: number;
+    startingPressureGroup: string;
+    startingPressureIndex: number;
+    postDivePressureGroup: string;
+    postDivePressureIndex: number;
+    safetyStop: { required: boolean; length: number; };
+    decoLimit: {
+        met: boolean;
+        warning: string
+    };
+    preFlightSI: string;
+    ppo: null | {
+        "value": number,
+        "warning": string
+    };
+    surfaceInterval: number;
+    actualBottomTime: number;
+    residualNitrogenTime: number;
+    totalBottomTime: number;
 }
 
 const initialDiveFormState = {
     depth: 0,
     time: 0,
-    surfaceInterval: 0
+    surfaceInterval: 0,
+    air: AIR
 }
 
 function DivePlanner() {
@@ -53,27 +64,38 @@ function DivePlanner() {
 
 
     const handleSubmit = useCallback(() => {
+        // Pass null or the previous dive to factor in the plan
         const previousDive = currentDives.length > 0 ? currentDives[currentDives.length - 1] : null
         const plannedDive = planDive(diveFormState, previousDive)
+
         const dive = {
             "depth": diveFormState.depth,
             "startingPressureGroup": plannedDive.startingPressureGroup,
             "startingPressureIndex": plannedDive.startingPressureIndex,
             "postDivePressureGroup": plannedDive.postDivePressureGroup,
             "postDivePressureIndex": plannedDive.postDivePressureIndex,
-            "safetyStopRequired": plannedDive.safetyStopRequired,
-            "minToNDL": plannedDive.minToNDL,
+            "safetyStop": plannedDive.safetyStop,
+            "decoLimit": plannedDive.decoLimit,
+            "preFlightSI": plannedDive.preFlightSI,
+            "ppo": plannedDive.ppo,
             "surfaceInterval": diveFormState.surfaceInterval,
             "actualBottomTime": diveFormState.time,
             "residualNitrogenTime": plannedDive.residualNitrogenTime,
             "totalBottomTime": plannedDive.totalBottomTime
         }
+
+        // Set Previous dive PG to display for Surface Interval
         setPrevDivePG(plannedDive.postDivePressureGroup)
+
+        // Reset form state, but persist air selection for subsequent dives
         let resetFormState = { ...initialDiveFormState }
+        resetFormState["air"] = diveFormState.air
         if (['Y', 'Z'].includes(plannedDive.postDivePressureGroup)) {
             resetFormState['surfaceInterval'] = 180
         }
         setFormState(resetFormState)
+
+        // Update dive list
         setCurrentDives([...currentDives, dive])
     }, [currentDives, diveFormState])
 
@@ -81,6 +103,13 @@ function DivePlanner() {
         setCurrentDives([]);
         setFormState(initialDiveFormState);
     }, [])
+
+    const handleRadioChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setFormState({
+            ...diveFormState,
+            air: e.target.value,
+        });
+    }
 
     return (<>
         <h1>Dive Planner</h1>
@@ -124,40 +153,34 @@ function DivePlanner() {
                             <p key={`diveSSRequired-${index}`}>
                                 Safety Stop Required:
                                 {
-                                    dive.safetyStopRequired && dive.minToNDL < 0 ? " 3 minutes"
-                                        : dive.safetyStopRequired && dive.minToNDL <= 5 && dive.minToNDL >= 0 ? " 8 minutes"
-                                            : dive.safetyStopRequired && dive.minToNDL > 5 ? " 15 minutes"
-                                                : " No"
+                                    dive.safetyStop.required ? ` ${dive.safetyStop.length} minutes` : " No"
                                 }
                             </p>
+                            {
+                                dive.ppo !== null ?
+                                    <>
+                                        <p> ppO2: {dive.ppo.value} </p>
+                                        {dive.ppo.value > 1.40 ? <b> {dive.ppo.warning} </b> : ""}
+                                    </>
+                                    : ""
+                            }
                             {/* Decompression Limit */}
-                            <p key={`diveMinToNDL-${index}`}>
-                                {dive.minToNDL > 0 ?
-                                    <b>
-                                        ❗ No Decompression limit exceeded by {dive.minToNDL} minutes.
-                                        This dive is highly discouraged.
-                                        This dive requires {dive.minToNDL <= 5 ? "an 8" : "a 15"} minute decompression stop (air supply permitting).
-                                        The diver must remain out of the water for {dive.minToNDL <= 5 ? "6" : "24"} hours before the next dive.
-                                    </b>
-                                    : dive.minToNDL < 0 ? `Minutes to No Decompression Limit: ${Math.abs(dive.minToNDL)}`
-                                        :
-                                        <b>
-                                            ❗ No Decompression limit met at {dive.totalBottomTime} minutes.
-                                            This dive is highly discouraged.
-                                            This dive requires an 8 minute decompression stop (air supply permitting).
-                                            The diver must remain out of the water for 6 hours before the next dive.
-                                        </b>
-                                }
-                            </p>
+                            {dive.decoLimit.met ?
+                                <>
+                                    <p key={`diveMinToNDL-${index}`}>
+                                        <b>{dive.decoLimit.warning}</b>
+                                    </p>
+                                </>
+                                : ""
+                            }
                             {/* Pre-flight surface interval minimums */}
                             <p key={`diveFlightSI-${index}`}>
                                 Pre-flight surface interval:
-                                {index === 0 && dive.minToNDL < 0 ?
-                                    " 12 hour minimum. If this dive follows multi-day dives, the minimum pre-flight surface interval is 18 hours."
+                                {index === 0 && !dive.decoLimit.met ?
+                                    " 12 hours. If this dive follows multi-day dives, the minimum pre-flight surface interval is 18 hours."
                                     :
-                                    index === 0 && dive.minToNDL >= 0 ? " 18 hour minimum"
-                                        :
-                                        " 18 hour minimum"}
+                                    dive.preFlightSI
+                                }
                             </p>
                             <hr />
                         </section>
@@ -182,6 +205,19 @@ function DivePlanner() {
                     </>
                     : ""
                 }
+                {/* Air Selection */}
+                {currentDives.length === 0 ?
+                    <>
+                        <fieldset>
+                            <input key={'airRadio'} id="air" type="radio" value={AIR} checked={diveFormState.air === AIR} onChange={handleRadioChange} />
+                            <label key={'airLabel'} htmlFor="air">Air</label>
+                            <input key={`${EANx32}Radio`} id={EANx32} type="radio" value={EANx32} checked={diveFormState.air === EANx32} onChange={handleRadioChange} />
+                            <label key={`${EANx32}Label`} htmlFor={EANx32}>{EANx32}</label>
+                            <input key={`${EANx36}Radio`} id={EANx36} type="radio" value={EANx36} checked={diveFormState.air === EANx36} onChange={handleRadioChange} />
+                            <label key={`${EANx36}Label`} htmlFor={EANx36}>{EANx36}</label>
+                        </fieldset>
+                    </>
+                    : ""}
 
                 <fieldset>
                     <label key={'depthLabel'} htmlFor="inputDepth">Depth</label>
