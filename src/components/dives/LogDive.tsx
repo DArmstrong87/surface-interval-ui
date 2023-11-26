@@ -113,51 +113,51 @@ function LogDive() {
         <form onSubmit={handleLogDiveSubmit}>
             <fieldset>
                 <label key={'dateLabel'} htmlFor="date">Date</label>
-                <input key={'dateInput'} name="date" type="date" value={formState.date} required onChange={handleInputChange} />
+                <input key={'dateInput'} id="date" name="date" type="date" value={formState.date} required onChange={handleInputChange} />
             </fieldset>
 
             <fieldset>
                 <label key={'locationLabel'} htmlFor="location">Location</label>
-                <input key={'locationInput'} name="location" type="text" value={formState.location} required onChange={handleInputChange} />
+                <input key={'locationInput'} id="location" name="location" type="text" value={formState.location} required onChange={handleInputChange} />
             </fieldset>
 
             <fieldset>
                 <label key={'siteLabel'} htmlFor="site">Site</label>
-                <input key={'siteInput'} name="site" type="text" value={formState.site} required onChange={handleInputChange} />
+                <input key={'siteInput'} id="site" name="site" type="text" value={formState.site} required onChange={handleInputChange} />
             </fieldset>
 
             <fieldset id="waterOptions">
                 <label key={'waterLabelFresh'} htmlFor="waterRadioFresh">Fresh</label>
-                <input key={'waterRadioFresh'} name="waterRadioFresh" type="radio" value="Fresh" checked={formState.water === 'Fresh'} onChange={handleRadioChange} />
+                <input key={'waterRadioFresh'} id="waterRadioFresh" type="radio" value="Fresh" checked={formState.water === 'Fresh'} onChange={handleRadioChange} />
                 <label key={'waterLabelSalt'} htmlFor="waterRadioSalt">Salt</label>
-                <input key={'waterRadioSalt'} name="waterRadioSalt" type="radio" value="Salt" checked={formState.water === 'Salt'} onChange={handleRadioChange} />
+                <input key={'waterRadioSalt'} id="waterRadioSalt" type="radio" value="Salt" checked={formState.water === 'Salt'} onChange={handleRadioChange} />
             </fieldset>
 
             <fieldset>
                 <label key={'depthLabel'} htmlFor="depth">Depth</label>
-                <input key={'depthInput'} name="depth" type="number" step={1} value={String(formState.depth)} required onChange={handleInputChange} />
+                <input key={'depthInput'} id="depth" name="depth" type="number" step={1} value={String(formState.depth)} required onChange={handleInputChange} />
             </fieldset>
 
             <fieldset>
                 <label key={'timeLabel'} htmlFor="time">Time (mins)</label>
-                <input key={'timeInput'} name="time" type="number" step={1} value={String(formState.time)} required onChange={handleInputChange} />
+                <input key={'timeInput'} id="time" name="time" type="number" step={1} value={String(formState.time)} required onChange={handleInputChange} />
             </fieldset>
 
             <fieldset>
                 <label key={'descriptionLabel'} htmlFor="description">Description</label>
-                <textarea key={'descriptionInput'} name="description" value={formState.description} onChange={handleTextareaChange} />
+                <textarea key={'descriptionInput'} id="description" name="description" value={formState.description} onChange={handleTextareaChange} />
             </fieldset>
 
             <fieldset>
                 <label key={'startPressureLabel'} htmlFor="startPressure">Starting Tank Pressure</label>
-                <input key={'startPressureInput'} name="startPressure" type="number" step={1} value={String(formState.startPressure)} onChange={handleInputChange} />
+                <input key={'startPressureInput'} id="startPressure" name="startPressure" type="number" step={1} value={String(formState.startPressure)} onChange={handleInputChange} />
                 <label key={'endPressureLabel'} htmlFor="endPressure">Ending Tank Pressure</label>
-                <input key={'endPressureInput'} name="endPressure" type="number" step={1} value={String(formState.endPressure)} onChange={handleInputChange} />
+                <input key={'endPressureInput'} id="endPressure" name="endPressure" type="number" step={1} value={String(formState.endPressure)} onChange={handleInputChange} />
             </fieldset>
 
             <fieldset>
                 <label key={'tankVolLabel'} htmlFor="tankVol">Tank volume (cubic feet)</label>
-                <input key={'tankVolInput'} name="tankVol" type="number" step={1} value={String(formState.tankVol)} onChange={handleInputChange} />
+                <input key={'tankVolInput'} id="tankVol" name="tankVol" type="number" step={1} value={String(formState.tankVol)} onChange={handleInputChange} />
             </fieldset>
 
             <fieldset>

@@ -88,6 +88,8 @@ function Login() {
 
                         <FormControlLabel
                             control={<Checkbox value="remember" color="primary" />}
+                            id="Remember me"
+                            name="Rememember me"
                             label="Remember me"
                         />
                         {!submitHidden &&
