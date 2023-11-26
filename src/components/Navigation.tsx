@@ -46,7 +46,7 @@ export default function ButtonAppBar() {
                         <Typography variant="h6" component="div" sx={{ flexGrow: 1 }} onClick={() => navTo("dives")}>
                             Dive Log
                         </Typography>
-                        <Typography variant="h6" component="div" sx={{ flexGrow: 1 }} onClick={() => navTo("dives")}>
+                        <Typography variant="h6" component="div" sx={{ flexGrow: 1 }} onClick={() => navTo("dive-planner")}>
                             Dive Plan
                         </Typography>
                         <Typography variant="h6" component="div" sx={{ flexGrow: 1 }} onClick={() => navTo("dives")}>

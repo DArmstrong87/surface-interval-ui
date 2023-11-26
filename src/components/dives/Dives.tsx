@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import APIService from '../api/APIService';
+import { useNavigate } from 'react-router-dom';
+import APIService from '../../api/APIService';
 
 interface Dive {
     id: number;
@@ -21,6 +22,7 @@ interface Dive {
 
 function Dives() {
 
+    const navigate = useNavigate();
     const [dives, setDives] = useState<Dive[]>([])
 
     useEffect(() => {
@@ -43,13 +45,17 @@ function Dives() {
     }
 
     return (<>
-        <h1>Hello</h1>
+        <h1>Dive Log</h1>
+
+        <button onClick={() => navigate('logDive')}>Log Dive</button>
 
         <table>
             <thead>
-                <th>
-                    <td>Dive Log</td>
-                </th>
+                <tr>
+                    <th>
+                        Dive Log
+                    </th>
+                </tr>
             </thead>
             <tbody>
                 <tr>
