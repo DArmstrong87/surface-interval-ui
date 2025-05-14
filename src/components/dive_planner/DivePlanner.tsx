@@ -39,6 +39,7 @@ const initialDiveFormState = {
     air: AIR
 }
 
+
 function DivePlanner() {
 
     const [currentDives, setCurrentDives] = useState<DivePlan[]>([])
@@ -50,15 +51,12 @@ function DivePlanner() {
     }, [currentDives])
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        // Prevent NaN
-        let value = parseInt(e.target.value)
-        if (isNaN(value)) {
-            value = 0
-        }
+        let intValue = parseInt(e.target.value) || 0;
+
         // Set form state
         setFormState({
             ...diveFormState,
-            [e.target.name]: value,
+            [e.target.name]: intValue,
         });
     };
 
@@ -198,8 +196,8 @@ function DivePlanner() {
                             ""}
                         <fieldset>
                             <label key={'surfaceIntervalLabel'} htmlFor="inputSurfaceInterval">Surface Interval (mins)</label>
-                            <input key={'surfaceIntervalInput'} id="inputSurfaceInterval" name="surfaceInterval" type="number"
-                                min={prevDivePG === 'Y' || prevDivePG === 'Z' ? 180 : ""} value={diveFormState.surfaceInterval}
+                            <input key={'surfaceIntervalInput'} id="inputSurfaceInterval" name="surfaceInterval" type="text" inputMode="numeric" pattern="[0-9]*"
+                                min={prevDivePG === 'Y' || prevDivePG === 'Z' ? 180 : 0} value={diveFormState.surfaceInterval || 0}
                                 required onChange={handleInputChange} />
                         </fieldset>
                     </>
@@ -221,17 +219,17 @@ function DivePlanner() {
 
                 <fieldset>
                     <label key={'depthLabel'} htmlFor="inputDepth">Depth</label>
-                    <input key={'depthInput'} id="inputDepth" name="depth" type="text" value={diveFormState.depth}
+                    <input key={'depthInput'} id="inputDepth" name="depth" type="text" inputMode="numeric" pattern="[0-9]*" value={diveFormState.depth || 0}
                         required onChange={handleInputChange} />
                 </fieldset>
 
                 <fieldset>
                     <label key={'timeLabel'} htmlFor="inputTime">Time (mins)</label>
-                    <input key={'timeInput'} id="inputTime" name="time" type="text" value={diveFormState.time} required onChange={handleInputChange} />
+                    <input key={'timeInput'} id="inputTime" name="time" type="text" inputMode="numeric" pattern="[0-9]*" value={diveFormState.time || 0}  min="0" required onChange={handleInputChange} />
                 </fieldset>
 
-                <button onClick={handleSubmit}>Dive</button>
-                <button onClick={handleReset}>Reset</button>
+                <button onClick={handleSubmit} id='diveBtn' disabled={diveFormState.depth <= 0  || diveFormState.time <= 0}>Dive</button>
+                <button onClick={handleReset} id='resetBtn'>Reset</button>
 
             </section>
 
