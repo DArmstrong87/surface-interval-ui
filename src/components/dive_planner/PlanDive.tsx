@@ -135,21 +135,25 @@ const getSafetyStopAndNDL = (totalBottomTime: number, depthIndex: number, air: s
     // Safety Stop, Deco Limit
     const minSafetyStopTime_decoLimit = SAFETY_STOP_DECO_LIMITS[depthIndex]
     const safetyStopRequired = totalBottomTime >= minSafetyStopTime_decoLimit[0]
-    const minDecoLimit = minSafetyStopTime_decoLimit[1]
-    const decoLimit = minSafetyStopTime_decoLimit[2]
+    const minDecoLimitTime = minSafetyStopTime_decoLimit[1]
+    const decoLimitTime = minSafetyStopTime_decoLimit[2]
+
+    // Under deco limit
+    const underDecoLimit = totalBottomTime < minDecoLimitTime
 
     // Matches or exceeds deco limit?
-    const meetsDecoLimit = totalBottomTime >= minDecoLimit
-    const minToAbsNDL = totalBottomTime - decoLimit
+    const meetsMinDecoLimit = totalBottomTime >= minDecoLimitTime
+    const minToAbsNDL = totalBottomTime - decoLimitTime
 
     // No Deco Scenarios
-    const roundUpToNDL = meetsDecoLimit && totalBottomTime < decoLimit
-    const meetsNDL = totalBottomTime === decoLimit
-    const exceedsNDL = totalBottomTime > decoLimit
+    const roundUpToNDL = meetsMinDecoLimit && totalBottomTime < decoLimitTime
+    const meetsNDL = totalBottomTime === decoLimitTime
+    const exceedsNDL = totalBottomTime > decoLimitTime
 
     // Length of safety stop depends on minutes exceeding NDL
+    // debugger
     const safetyStopLength = (
-        roundUpToNDL || meetsNDL ? 3
+        underDecoLimit ? 3
             : minToAbsNDL >= 0 && minToAbsNDL <= 5 ? 8
                 : 15
     )
@@ -157,12 +161,12 @@ const getSafetyStopAndNDL = (totalBottomTime: number, depthIndex: number, air: s
     // Warning message depends on scenario
     let noDecoLimitWarning = ""
     if (roundUpToNDL) {
-        noDecoLimitWarning = `❗ No Decompression limit met. The total time of this dive requires rounding up to the next pressure group which meets the No Decompression Limit of ${decoLimit} minutes.
+        noDecoLimitWarning = `❗ No Decompression limit met. The total time of this dive requires rounding up to the next pressure group which meets the No Decompression Limit of ${decoLimitTime} minutes.
         This dive is highly discouraged.
         This dive requires an 8 minute decompression stop (air supply permitting).
         The diver must remain out of the water for 6 hours before the next dive.`
     } else if (meetsNDL) {
-        noDecoLimitWarning = `❗ No Decompression limit met at ${decoLimit} minutes. This dive is highly discouraged.
+        noDecoLimitWarning = `❗ No Decompression limit met at ${decoLimitTime} minutes. This dive is highly discouraged.
         This dive requires an 8 minute decompression stop (air supply permitting).
         The diver must remain out of the water for 6 hours before the next dive.`
     } else if (exceedsNDL) {
@@ -181,7 +185,7 @@ const getSafetyStopAndNDL = (totalBottomTime: number, depthIndex: number, air: s
     }
 
     const noDecoLimit = {
-        "met": meetsDecoLimit,
+        "met": meetsMinDecoLimit,
         "warning": noDecoLimitWarning
     }
 
