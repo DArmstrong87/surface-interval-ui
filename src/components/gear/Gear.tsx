@@ -99,7 +99,7 @@ function Gear() {
     return (<>
         <h1>Gear</h1>
 
-        <button onClick={() => navigate('logDive')}>Add Gear Set</button>
+        <button onClick={() => navigate('./add')}>Add Gear Set</button>
 
         <div>
             {gearSetCards(gearSets)}

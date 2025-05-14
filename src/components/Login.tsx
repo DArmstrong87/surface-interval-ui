@@ -20,7 +20,7 @@ function Login() {
     const [submitHidden, setSubmitHidden] = useState<boolean>(false);
 
     const data = {
-        "username": "danny",
+        "username": "TestUser",
         "password": "123"
     };
 

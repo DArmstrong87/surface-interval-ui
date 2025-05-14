@@ -1,6 +1,7 @@
 import { Route, Routes } from "react-router-dom"
 import Dives from "./components/dives/Dives";
 import Gear from "./components/gear/Gear";
+import AddGear from "./components/gear/AddGear";
 import LogDive from "./components/dives/LogDive";
 import Home from "./Home";
 import Login from "./components/Login";
@@ -19,6 +20,7 @@ export const ApplicationViews = () => {
                     <Route path="/dives/logDive" Component={LogDive} />
                     <Route path="/dive-planner" Component={DivePlanner} />
                     <Route path="/gear" Component={Gear} />
+                    <Route path="/gear/add" Component={AddGear} />
                     <Route path="/profile" Component={Dives} />
                 </Route>
             </Routes>
