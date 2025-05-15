@@ -33,9 +33,11 @@ export interface CustomGearType {
 export interface GearItem {
     id: number;
     gear_type: {
+        id: number;
         name: string;
     };
     custom_gear_type: {
+        id: number;
         name: string;
     } | null;
     name: string;

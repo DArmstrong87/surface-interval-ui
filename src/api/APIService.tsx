@@ -47,6 +47,16 @@ class APIService {
             console.error('Error:', error.message);
         }
     }
+
+    public async deleteData(endpoint: string): Promise<any> {
+        try {
+            const response: AxiosResponse = await this.axiosInstance.delete(endpoint);
+            return response.data;
+        } catch (error: unknown) {
+            this.handleError(error as AxiosError);
+            throw error;
+        }
+    }
 }
 
 export default new APIService() as APIService;

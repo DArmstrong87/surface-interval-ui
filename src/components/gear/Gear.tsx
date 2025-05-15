@@ -32,7 +32,6 @@ function Gear() {
             <div key={`${index}-gear-set-card`}>
                 <h2>{gearSet.name}</h2>
                 <div key={`${index}-gear-card-div`}>
-                    <h3>Gear List</h3>
                     <table>
                         <thead>
                             <tr>
@@ -68,7 +67,7 @@ function Gear() {
 
     function gearItemList(gearItems: GearItem[]) {
         return gearItems.map((gearItem, index) =>
-            <tr key={`${index}-gear-items-table-row`}>
+            <tr key={`${index}-gear-items-table-row`} onClick={() => navigate(`/gear/${gearItem.id}`)}>
                 <td>{gearItem.name}</td>
                 {/* Look for gear type or custom gear type name, else "Unknown" */}
                 <td>{gearItem.gear_type?.name || gearItem.custom_gear_type?.name || "Unknown Type"}</td>
@@ -79,12 +78,14 @@ function Gear() {
     return (<>
         <h1>Gear</h1>
 
-        <button onClick={() => navigate('./add')}>Add Gear Set</button>
+        <button onClick={() => navigate('./add')}>Add Gear</button>
+        {gearItems.length > 0 && <button onClick={() => navigate('./add-gear-set')}>Add Gear Set</button>}
 
         <div>
             {gearSetCards(gearSets)}
         </div>
 
+        <hr/>
 
         <table>
             <thead>
