@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, MouseEventHandler } from 'react';
 import APIService from '../../api/APIService';
 
 interface GearType {
@@ -16,30 +16,33 @@ interface CustomGearType {
 }
 
 interface NewGearItemFormState {
-    gearType: string;
-    customGearType: string;
+    gearTypeId: number | null;
+    customGearTypeId: number | null;
+    newCustomGearType: string;
     name: string;
 }
 
 interface GearItemService {
     purchaseDate: string;
-    lastServiced: string;
+    serviceDate: string;
     diveInterval: number;
-    daysInterval: number;
+    dayInterval: number;
 }
 
 const newGearItemInitial: NewGearItemFormState = {
-    gearType: "",
-    customGearType: "",
+    gearTypeId: null,
+    customGearTypeId: null,
+    newCustomGearType: "",
     name: "",
 }
 
 const newGearItemServiceInitial: GearItemService = {
     purchaseDate: "",
-    lastServiced: "",
+    serviceDate: "",
     diveInterval: 0,
-    daysInterval: 0
+    dayInterval: 0
 }
+
 
 function AddGear() {
 
@@ -48,6 +51,7 @@ function AddGear() {
     const [trackService, setTrackService] = useState(false);
     const [newGearItemFormState, setNewGearItemForm] = useState<NewGearItemFormState>(newGearItemInitial);
     const [newGearItemServiceState, setNewGearItemService] = useState<GearItemService>(newGearItemServiceInitial);
+    const [gearTypeError, setGearTypeError] = useState(false);
 
     useEffect(() => {
         APIService.fetchData("/gear-types")
@@ -56,6 +60,63 @@ function AddGear() {
             .then(customGearTypes => setCustomGearTypes(customGearTypes))
     }
         , [])
+
+    const postGearItem = (formData: NewGearItemFormState): number | null => {
+        let createdGearItemId = null;
+        APIService.sendData("/gear-items", formData).then(
+            createdGearItem => {
+                createdGearItemId = createdGearItem
+            }
+        )
+        return createdGearItemId
+    }
+
+    const postGearItemServiceInterval = (gearItemId: number) => {
+        const data = { ...newGearItemServiceState, gearItemId: gearItemId }
+        APIService.sendData("/gear-item-service-interval", data).then(
+            created_gear_item => console.log(created_gear_item)
+        )
+    }
+
+    const postGearItemService = (gearItemId: number, serviceDate: string) => {
+        const data = {
+            gearItemId: gearItemId,
+            serviceDate: serviceDate
+        }
+        APIService.sendData("/gear-item-service", data).then(
+            created_gear_item => console.log(created_gear_item)
+        )
+    }
+
+    const handleSubmit = (event: React.FormEvent) => {
+
+        const formIsValid = validateFormData(newGearItemFormState)
+        if (!formIsValid){
+            event.preventDefault();
+            return
+        }
+        debugger
+
+        const createdGearItemId = postGearItem(newGearItemFormState);
+
+        if (trackService && createdGearItemId) {
+            postGearItemServiceInterval(createdGearItemId)
+        }
+
+        const serviceDate = { ...newGearItemServiceState }.serviceDate
+        if (trackService &&  createdGearItemId && serviceDate) {
+            postGearItemService(createdGearItemId, serviceDate)
+        }
+    }
+
+    const validateFormData = (newGearItemFormState: NewGearItemFormState): boolean => {
+        const gearTypes = [newGearItemFormState.customGearTypeId, newGearItemFormState.gearTypeId, newGearItemFormState.newCustomGearType]
+        const onlyOne = (gearTypes.filter(item => item === null).length === 1 && newGearItemFormState.newCustomGearType === "") || (gearTypes.filter(item => item === null).length === 2 && newGearItemFormState.newCustomGearType !== "")
+        if (!onlyOne) {
+            setGearTypeError(true)
+        }
+        return onlyOne
+    }
 
     const today = new Date().toISOString().split("T")[0];
 
@@ -67,16 +128,26 @@ function AddGear() {
 
     const handleGearTypeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
         const selectedGearType = e.target.value;
-        const updatedNewGearItemFormState = { ...newGearItemFormState, gearType: selectedGearType, customGearType: "" };
+        const custom = e.target.name === "customGearType"
+        let updatedNewGearItemFormState = null;
+
+        if (custom){
+            updatedNewGearItemFormState = { ...newGearItemFormState, customGearTypeId: parseInt(selectedGearType), gearTypeId: null };
+        } else {
+            updatedNewGearItemFormState = { ...newGearItemFormState, gearTypeId: parseInt(selectedGearType), customGearTypeId: null };
+        }
+
         setNewGearItemForm(updatedNewGearItemFormState);
+        setGearTypeError(false);
         console.log("Selected gear type:", selectedGearType);
         console.log("New gear item form state:", updatedNewGearItemFormState);
     };
 
-    const handleCustomGearTypeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const handleNewCustomGearTypeInput = (e: React.ChangeEvent<HTMLInputElement>) => {
         const selectedGearType = e.target.value;
-        const updatedNewGearItemFormState = { ...newGearItemFormState, customGearType: selectedGearType, gearType: "" };
+        const updatedNewGearItemFormState = { ...newGearItemFormState, newCustomGearType: selectedGearType, gearTypeId: null, customGearTypeId: null };
         setNewGearItemForm(updatedNewGearItemFormState);
+        setGearTypeError(false);
         console.log("Selected gear type:", selectedGearType);
         console.log("New gear item form state:", updatedNewGearItemFormState);
     };
@@ -84,6 +155,7 @@ function AddGear() {
     const handleInput = (e: React.ChangeEvent<HTMLInputElement>) => {
         const updatedNewGearItemFormState = { ...newGearItemFormState, name: e.target.value };
         setNewGearItemForm(updatedNewGearItemFormState);
+        setGearTypeError(false);
         console.log("New gear item form state:", updatedNewGearItemFormState);
     }
 
@@ -97,7 +169,7 @@ function AddGear() {
 
     const handleNumberInputs = (e: React.ChangeEvent<HTMLInputElement>) => {
         const name = e.target.name;
-        const value = e.target.value;
+        const value = parseInt(e.target.value);
         const updatedNewGearItemServiceState = { ...newGearItemServiceState, [name]: value };
         setNewGearItemService(updatedNewGearItemServiceState);
         console.log("New gear item service state:", updatedNewGearItemServiceState);
@@ -106,9 +178,13 @@ function AddGear() {
     return (<>
         <div>
             <h1>Add Gear</h1>
-            <form>
+            <form onSubmit={handleSubmit}>
+                {gearTypeError && <>
+                    <div style={{color: "red"}}>Select 1 of gear type, custom gear type or add a new custom gear type.</div>
+                </>
+                }
                 <label htmlFor="gearType">Gear Type: </label>
-                <select id="gearType" name="gearType" onChange={handleGearTypeChange} value={newGearItemFormState.gearType}>
+                <select id="gearType" name="gearType" onChange={handleGearTypeChange} value={newGearItemFormState.gearTypeId || ""}>
                     <option value="">Select Gear Type</option>
                     {gearTypes.map((gearType) => (
                         <option key={gearType.id} value={gearType.id}>
@@ -117,13 +193,10 @@ function AddGear() {
                     ))}
                 </select>
                 <br />
-                <label htmlFor="customGearType">Add Custom Gear Type: </label>
-                <input type="text" id="customGearType" name="customGearType" onInput={handleCustomGearTypeChange} value={newGearItemFormState.customGearType} />
-                <br />
                 {customGearTypes.length > 0 &&
                     <>
                         <label htmlFor="customGearType">Custom Gear Type: </label>
-                        <select id="customGearType" name="customGearType">
+                        <select id="customGearType" name="customGearType" onChange={handleGearTypeChange} value={newGearItemFormState.customGearTypeId || ""}>
                             <option value="">Select Custom Gear Type</option>
                             {customGearTypes.map((customGearType) => (
                                 <option key={customGearType.id} value={customGearType.id}>
@@ -134,8 +207,11 @@ function AddGear() {
                     </>
                 }
                 <br />
+                <label htmlFor="newCustomGearType">Add Custom Gear Type: </label>
+                <input type="text" id="newCustomGearType" name="newCustomGearType" onInput={handleNewCustomGearTypeInput} value={newGearItemFormState.newCustomGearType || ""} />
+                <br />
                 <label htmlFor="name">Name: </label>
-                <input type="text" id="name" name="name" value={newGearItemFormState.name} onInput={handleInput} />
+                <input type="text" id="name" name="name" required value={newGearItemFormState.name} onInput={handleInput} />
                 <br />
                 <label htmlFor="trackService">Track Service: </label>
                 <input type="checkbox" id="trackService" name="trackService" onChange={handleTrackServiceChange} />
@@ -145,19 +221,20 @@ function AddGear() {
                         <hr />
                         <h2>Service Tracking</h2>
                         <label htmlFor="purchaseDate">Purchase Date: </label>
-                        <input type="date" id="purchaseDate" max={today} name="purchaseDate" value={newGearItemServiceState.purchaseDate} onChange={handleDateInputs} />
+                        <input type="date" id="purchaseDate" required max={today} name="purchaseDate" value={newGearItemServiceState.purchaseDate} onChange={handleDateInputs} />
                         <br />
-                        <label htmlFor="lastServiced">Last Serviced: </label>
-                        <input type="date" id="lastServiced" max={today} name="lastServiced" value={newGearItemServiceState.lastServiced} onChange={handleDateInputs} />
+                        <label htmlFor="serviceDate">Last Serviced (optional): </label>
+                        <input type="date" id="serviceDate" max={today} name="serviceDate" value={newGearItemServiceState.serviceDate} onChange={handleDateInputs} />
                         <br />
                         <label htmlFor="diveInterval">Dives before next service: </label>
-                        <input type="number" id="diveInterval" name="diveInterval" value={newGearItemServiceState.diveInterval} onInput={handleNumberInputs} />
+                        <input type="number" id="diveInterval" required name="diveInterval" value={newGearItemServiceState.diveInterval} onInput={handleNumberInputs} />
                         <br />
-                        <label htmlFor="daysInterval">Days before next service: </label>
-                        <input type="number" id="daysInterval" name="daysInterval" value={newGearItemServiceState.daysInterval} onInput={handleNumberInputs} />
+                        <label htmlFor="dayInterval">Days before next service: </label>
+                        <input type="number" id="dayInterval" required name="dayInterval" value={newGearItemServiceState.dayInterval} onInput={handleNumberInputs} />
                         <br />
                     </>
                 }
+                <button id="addGearBtn">Add Gear</button>
             </form>
         </div>
     </>

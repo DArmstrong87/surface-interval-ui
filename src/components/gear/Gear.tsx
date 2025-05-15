@@ -49,6 +49,7 @@ function Gear() {
     // }
 
     function gearSetCards(gearSets: GearSet[]) {
+
         return gearSets.map((gearSet, index) =>
             <div key={`${index}-gear-set-card`}>
                 <h2>{gearSet.name}</h2>
@@ -66,10 +67,10 @@ function Gear() {
                                 gearSet.gear_items.map((gearItem, index) =>
                                     <tr key={`${index}-gear-item-table-row`}>
                                         <td>
-                                            {gearItem.name}
+                                            {gearItem?.name}
                                         </td>
                                         <td>
-                                            {gearItem.gear_type.name}
+                                            {gearItem?.gear_type?.name}
                                         </td>
                                     </tr>
                                 )
@@ -91,7 +92,8 @@ function Gear() {
         return gearItems.map((gearItem, index) =>
             <tr key={`${index}-gear-items-table-row`}>
                 <td>{gearItem.name}</td>
-                <td>{gearItem.gear_type.name}</td>
+                {/* Look for gear type or custom gear type name, else "Unknown" */}
+                <td>{gearItem.gear_type?.name || gearItem.custom_gear_type?.name || "Unknown Type"}</td>
             </tr>
         )
     }
