@@ -57,6 +57,17 @@ class APIService {
             throw error;
         }
     }
+
+    public async updateData(endpoint: string, data: any): Promise<any> {
+        try {
+            const response: AxiosResponse = await this.axiosInstance.put(endpoint, data);
+            return response.data;
+        } catch (error: unknown) {
+            this.handleError(error as AxiosError);
+            throw error;
+        }
+    }
+    
 }
 
 export default new APIService() as APIService;

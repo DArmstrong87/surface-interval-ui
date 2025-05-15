@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import APIService from '../../api/APIService';
-import { GearType, CustomGearType, GearItemService, GearItem } from '../../interfaces';
+import { GearType, CustomGearType, GearItem } from '../../interfaces';
 
 interface NewGearSetFormState {
     name: string;
@@ -16,7 +16,9 @@ const newGearSetInitial: NewGearSetFormState = {
 }
 
 
-function AddGearSet() {
+function AddOrEditGearSet() {
+    const { gearSetId } = useParams();
+
     const navigate = useNavigate();
     const [gearTypes, setGearTypes] = useState<GearType[]>([]);
     const [customGearTypes, setCustomGearTypes] = useState<CustomGearType[]>([]);
@@ -31,6 +33,18 @@ function AddGearSet() {
             .then(gearTypes => setGearTypes(gearTypes))
         APIService.fetchData("/custom-gear-types")
             .then(customGearTypes => setCustomGearTypes(customGearTypes))
+        if (gearSetId) {
+            console.log(gearSetId);
+            APIService.fetchData(`/gear-sets/${gearSetId}`)
+                .then(gearSet => {
+                    const formData = {
+                        name: gearSet.name,
+                        weight: gearSet.weight,
+                        gearItemIds: gearSet.gear_items.map((item: GearItem) => item.id),
+                    }
+                    setNewGearSetForm(formData);
+                })
+        }
     }
         , [])
 
@@ -61,20 +75,43 @@ function AddGearSet() {
             gearItemIds: newGearSetForm.gearItemIds,
         }
 
-        APIService.sendData("/gear-sets", gearSet)
-            .then(response => {
-                console.log(response);
-            })
-            .catch(error => {
-                console.error(error);
-            });
+        if (gearSetId) {
+            APIService.updateData(`/gear-sets/${gearSetId}`, gearSet)
+                .then(response => {
+                    console.log(response);
+                })
+                .catch(error => {
+                    console.error(error);
+                });
+        } else {
+            APIService.sendData("/gear-sets", gearSet)
+                .then(response => {
+                    console.log(response);
+                })
+                .catch(error => {
+                    console.error(error);
+                });
+        }
         console.log("Gear set submitted");
         navigate("/gear");
     }
 
+    const handleDelete = () => {
+        if (window.confirm("Are you sure you want to delete this gear set?")) {
+            APIService.deleteData(`/gear-sets/${gearSetId}`)
+                .then(response => {
+                    console.log(response);
+            })
+            .catch(error => {
+                    console.error(error);
+                });
+            navigate("/gear");
+        }
+    }
+
     return (<>
         <div>
-            <h1>Add Gear</h1>
+            <h1>{gearSetId ? "Edit" : "Add"} Gear Set</h1>
             <form onSubmit={handleSubmit}>
 
                 <label htmlFor="gearSetName">Gear Set Name: </label>
@@ -119,16 +156,12 @@ function AddGearSet() {
                 }
 
 
-                <button id="addGearSetBtn">Add Gear Set</button>
+                <button id="addGearSetBtn">{gearSetId ? "Save" : "Add"} Gear Set</button>
+                {gearSetId && <button id="deleteGearSetBtn" onClick={handleDelete}>Delete Gear Set</button>}
             </form>
         </div>
     </>
     );
 }
 
-// name
-// gear_type or custom gear_type
-// purchase_date
-// last_serviced
-
-export default AddGearSet;
+export default AddOrEditGearSet;

@@ -8,7 +8,7 @@ import Login from "./components/Login";
 import { Authorized } from "./components/Authorized";
 import DivePlanner from "./components/dive_planner/DivePlanner";
 import GearItemDetail from "./components/gear/GearItemDetail";
-import AddGearSet from "./components/gear/AddGearSet";
+import AddOrEditGearSet from "./components/gear/AddOrEditGearSet";
 
 export const ApplicationViews = () => {
     return (
@@ -23,7 +23,8 @@ export const ApplicationViews = () => {
                     <Route path="/gear" Component={Gear} />
                     <Route path="/gear/:gearItemId" Component={GearItemDetail} />
                     <Route path="/gear/add" Component={AddGear} />
-                    <Route path="/gear/add-gear-set" Component={AddGearSet} />
+                    <Route path="/gear/add-gear-set" Component={AddOrEditGearSet} />
+                    <Route path="/gear/gear-set/:gearSetId" Component={AddOrEditGearSet} />
                     <Route path="/profile" Component={Dives} />
                 </Route>
             </Routes>

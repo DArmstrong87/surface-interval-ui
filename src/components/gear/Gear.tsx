@@ -30,7 +30,7 @@ function Gear() {
 
         return gearSets.map((gearSet, index) =>
             <div key={`${index}-gear-set-card`}>
-                <h2>{gearSet.name}</h2>
+                <h2 onClick={() => navigate(`/gear/gear-set/${gearSet.id}`)}>{gearSet.name}</h2>
                 <div key={`${index}-gear-card-div`}>
                     <table>
                         <thead>
