@@ -1,21 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import APIService from '../../api/APIService';
+import { GearSet } from '../../interfaces';
 
-interface GearSet {
-    id: number,
-    name: string,
-    bcd: object,
-    regulator: object,
-    octopus: object,
-    mask: object,
-    fins: object,
-    boots: object,
-    computer: object,
-    exposure_suit: object,
-    weights: number,
-    tank: number,
-}
 
 interface LogDiveFormState {
     date: string;

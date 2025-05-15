@@ -1,32 +1,13 @@
-import React, { useState, useEffect, MouseEventHandler } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import APIService from '../../api/APIService';
-
-interface GearType {
-    id: number;
-    name: string;
-}
-
-interface CustomGearType {
-    id: number;
-    name: string;
-    diver: {
-        id: number;
-        name: string;
-    };
-}
+import { GearType, CustomGearType, GearItemService } from '../../interfaces';
 
 interface NewGearItemFormState {
     gearTypeId: number | null;
     customGearTypeId: number | null;
     newCustomGearType: string;
     name: string;
-}
-
-interface GearItemService {
-    purchaseDate: string;
-    serviceDate: string;
-    diveInterval: number;
-    dayInterval: number;
 }
 
 const newGearItemInitial: NewGearItemFormState = {
@@ -45,7 +26,7 @@ const newGearItemServiceInitial: GearItemService = {
 
 
 function AddGear() {
-
+    const navigate = useNavigate();
     const [gearTypes, setGearTypes] = useState<GearType[]>([]);
     const [customGearTypes, setCustomGearTypes] = useState<CustomGearType[]>([]);
     const [trackService, setTrackService] = useState(false);
@@ -61,52 +42,63 @@ function AddGear() {
     }
         , [])
 
-    const postGearItem = (formData: NewGearItemFormState): number | null => {
-        let createdGearItemId = null;
-        APIService.sendData("/gear-items", formData).then(
-            createdGearItem => {
-                createdGearItemId = createdGearItem
-            }
-        )
-        return createdGearItemId
-    }
-
-    const postGearItemServiceInterval = (gearItemId: number) => {
-        const data = { ...newGearItemServiceState, gearItemId: gearItemId }
-        APIService.sendData("/gear-item-service-interval", data).then(
-            created_gear_item => console.log(created_gear_item)
-        )
-    }
-
-    const postGearItemService = (gearItemId: number, serviceDate: string) => {
-        const data = {
-            gearItemId: gearItemId,
-            serviceDate: serviceDate
+    const postGearItem = async (formData: NewGearItemFormState): Promise<number | null> => {
+        try {
+            const createdGearItem = await APIService.sendData("/gear-items", formData);
+            return createdGearItem.id;
+        } catch (error) {
+            console.error("Error creating gear item:", error);
+            return null;
         }
-        APIService.sendData("/gear-item-service", data).then(
-            created_gear_item => console.log(created_gear_item)
-        )
     }
 
-    const handleSubmit = (event: React.FormEvent) => {
-
-        const formIsValid = validateFormData(newGearItemFormState)
-        if (!formIsValid){
-            event.preventDefault();
-            return
+    const postGearItemServiceInterval = async (gearItemId: number) => {
+        try {
+            const data = { ...newGearItemServiceState, gearItemId: gearItemId };
+            await APIService.sendData("/gear-item-service-interval", data);
+        } catch (error) {
+            console.error("Error creating service interval:", error);
         }
+    }
+
+    const postGearItemService = async (gearItemId: number, serviceDate: string) => {
+        try {
+            const data = {
+                gearItemId: gearItemId,
+                serviceDate: serviceDate
+            };
+            await APIService.sendData("/gear-item-service", data);
+        } catch (error) {
+            console.error("Error creating service record:", error);
+        }
+    }
+
+    const handleSubmit = async (event: React.FormEvent) => {
+        event.preventDefault();
+
+        const formIsValid = validateFormData(newGearItemFormState);
         debugger
-
-        const createdGearItemId = postGearItem(newGearItemFormState);
-
-        if (trackService && createdGearItemId) {
-            postGearItemServiceInterval(createdGearItemId)
+        if (!formIsValid) {
+            return;
         }
 
-        const serviceDate = { ...newGearItemServiceState }.serviceDate
-        if (trackService &&  createdGearItemId && serviceDate) {
-            postGearItemService(createdGearItemId, serviceDate)
+        try {
+            const createdGearItemId = await postGearItem(newGearItemFormState);
+
+            if (trackService && createdGearItemId) {
+                await postGearItemServiceInterval(createdGearItemId);
+
+                const serviceDate = newGearItemServiceState.serviceDate;
+                if (serviceDate && serviceDate !== "") {
+                    await postGearItemService(createdGearItemId, serviceDate);
+                }
+            }
+            navigate(`/gear/${createdGearItemId}`);
+        } catch (error) {
+            console.error("Error submitting gear item:", error);
+            alert("Error submitting gear item");
         }
+
     }
 
     const validateFormData = (newGearItemFormState: NewGearItemFormState): boolean => {

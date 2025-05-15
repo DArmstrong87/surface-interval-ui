@@ -1,28 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import APIService from '../../api/APIService';
+import { GearItem, GearSet } from '../../interfaces';
 
-interface GearItem {
-    id: number;
-    gear_type: {
-        name: string;
-    };
-    custom_gear_type: {
-        name: string;
-    } | null;
-    name: string;
-    dives_since_last_service: number;
-    days_since_last_service: number;
-    due_for_service_days: number;
-    due_for_service_dives: number;
-}
-
-interface GearSet {
-    id: number;
-    name: string;
-    weight: number;
-    gear_items: GearItem[];
-}
 
 function Gear() {
 
@@ -34,19 +14,17 @@ function Gear() {
     useEffect(() => {
         APIService.fetchData("/gear-sets")
             .then(gearSets => setGearSets(gearSets))
+            .catch(error => {
+                console.error("Error fetching gear sets:", error);
+                setGearSets([]);
+            });
         APIService.fetchData("/gear-items")
             .then(gearItems => setGearItems(gearItems))
+            .catch(error => {
+                console.error("Error fetching gear items:", error);
+                setGearItems([]);
+            });
     }, [])
-
-    // function gearSetList(gearSets: GearSet[]) {
-    //     return gearSets.map((gearSet, index) =>
-    //         <tr key={index}>
-    //             <td key={`${index}-id`}>{gearSet.id}</td>
-    //             <td key={`${index}-name`}>{gearSet.name}</td>
-    //             <td key={`${index}-weight`}>{gearSet.weight}</td>
-    //         </tr>
-    //     )
-    // }
 
     function gearSetCards(gearSets: GearSet[]) {
 
@@ -65,7 +43,7 @@ function Gear() {
                         <tbody>
                             {
                                 gearSet.gear_items.map((gearItem, index) =>
-                                    <tr key={`${index}-gear-item-table-row`}>
+                                    <tr key={`${index}-gear-item-table-row`} onClick={() => navigate(`/gear/${gearItem.id}`)}>
                                         <td>
                                             {gearItem?.name}
                                         </td>

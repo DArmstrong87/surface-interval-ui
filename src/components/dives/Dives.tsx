@@ -1,24 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import APIService from '../../api/APIService';
+import { Dive } from '../../interfaces';
 
-interface Dive {
-    id: number;
-    date: string;
-    gear_set: any;
-    location: string;
-    site: string;
-    water: string;
-    depth: number;
-    time: number;
-    description: string;
-    start_pressure: number;
-    end_pressure: number;
-    tank_vol: number;
-    air_consumption: number;
-    favorite: boolean;
-    dive_number: number;
-}
+
 
 function Dives() {
 

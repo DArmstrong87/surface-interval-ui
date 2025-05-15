@@ -7,6 +7,7 @@ import Home from "./Home";
 import Login from "./components/Login";
 import { Authorized } from "./components/Authorized";
 import DivePlanner from "./components/dive_planner/DivePlanner";
+import GearItemDetail from "./components/gear/GearItemDetail";
 
 
 export const ApplicationViews = () => {
@@ -20,6 +21,7 @@ export const ApplicationViews = () => {
                     <Route path="/dives/logDive" Component={LogDive} />
                     <Route path="/dive-planner" Component={DivePlanner} />
                     <Route path="/gear" Component={Gear} />
+                    <Route path="/gear/:gearItemId" Component={GearItemDetail} />
                     <Route path="/gear/add" Component={AddGear} />
                     <Route path="/profile" Component={Dives} />
                 </Route>
