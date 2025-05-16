@@ -2,7 +2,8 @@ name: Lint and Format Check
 
 on:
   push:
-    branches: - '*'
+    branches:
+      - '*'
 
 jobs:
   lint:
