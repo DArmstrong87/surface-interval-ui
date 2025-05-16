@@ -1,9 +1,9 @@
+import dive_flag from "../images/dive_flag.png";
 import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import { useNavigate } from "react-router-dom";
-
 export default function ButtonAppBar() {
     const navigate = useNavigate();
 
@@ -27,6 +27,20 @@ export default function ButtonAppBar() {
                 <AppBar position="static">
                     <Toolbar>
                         <Box
+                            sx={{ display: "flex", justifyContent: "center", alignItems: "center", maxWidth: "100px" }}
+                        >
+                            <img
+                                src={dive_flag}
+                                alt="logo"
+                                style={{
+                                    maxWidth: "60px",
+                                    maxHeight: "60px",
+                                    objectFit: "contain",
+                                    display: "block",
+                                }}
+                            />
+                        </Box>
+                        <Box
                             sx={{
                                 display: "flex",
                                 justifyContent: "center",
@@ -36,7 +50,7 @@ export default function ButtonAppBar() {
                             }}
                         >
                             <Typography
-                                variant="h6"
+                                variant="h4"
                                 component="div"
                                 sx={{
                                     cursor: "pointer",
@@ -47,13 +61,13 @@ export default function ButtonAppBar() {
                                     borderRadius: 1,
                                     ":hover": {
                                         color: "orange",
-                                        background: "rgba(255,255,255,0.1)",
-                                        transition: "all 0.3s",
+                                        // background: "rgba(255,255,255,0.1)",
+                                        transition: "all 0.5s",
                                     },
                                 }}
                                 onClick={() => navTo("")}
                             >
-                                Home
+                                Surface Interval
                             </Typography>
                             <Typography
                                 variant="h6"

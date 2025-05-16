@@ -18,6 +18,8 @@ import {
     InputLabel,
     SelectChangeEvent,
 } from "@mui/material";
+import OctopusSpinner from "../../OctopusSpinner";
+import { loadingSpinnerTime } from "../Constants";
 
 interface LogDiveFormState {
     date: string;
@@ -51,13 +53,34 @@ function LogDive() {
     // STATE
     const [gearSets, setGearSets] = useState<GearSet[]>([]);
     const [formState, setFormState] = useState<LogDiveFormState>(initialFormState);
+    const [loading, setLoading] = useState(true);
 
     const navigate = useNavigate();
 
     // Set gear sets to populate options
     useEffect(() => {
-        APIService.fetchData<GearSet[]>("/gear-sets").then((gearSets) => setGearSets(gearSets));
+        APIService.fetchData<GearSet[]>("/gear-sets").then((gearSets) => {
+            setGearSets(gearSets);
+            setTimeout(() => setLoading(false), loadingSpinnerTime);
+        });
     }, []);
+
+    if (loading) {
+        return (
+            <Box
+                sx={{
+                    width: "100vw",
+                    height: "100vh",
+                    bgcolor: "white",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                }}
+            >
+                <OctopusSpinner size={96} />
+            </Box>
+        );
+    }
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const value = e.currentTarget.type === "number" ? parseInt(e.target.value) : e.target.value;

@@ -18,6 +18,8 @@ import {
     Typography,
     Alert,
 } from "@mui/material";
+import OctopusSpinner from "../../OctopusSpinner";
+import { loadingSpinnerTime } from "../Constants";
 
 interface NewGearItemFormState {
     gearTypeId: number | null;
@@ -48,19 +50,37 @@ function AddGear() {
     const [newGearItemFormState, setNewGearItemForm] = useState<NewGearItemFormState>(newGearItemInitial);
     const [newGearItemServiceState, setNewGearItemService] = useState<GearItemService>(newGearItemServiceInitial);
     const [gearTypeError, setGearTypeError] = useState(false);
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
+        const fetchData = async () => {
+            const [gearTypes, customGearTypes] = await Promise.all([
+                APIService.fetchData<GearType[]>("/gear-types"),
+                APIService.fetchData<CustomGearType[]>("/custom-gear-types"),
+            ]);
+            setGearTypes(gearTypes);
+            setCustomGearTypes(customGearTypes);
+            setTimeout(() => setLoading(false), loadingSpinnerTime);
+        };
         fetchData();
     }, []);
 
-    const fetchData = async () => {
-        const [gearTypes, customGearTypes] = await Promise.all([
-            APIService.fetchData<GearType[]>("/gear-types"),
-            APIService.fetchData<CustomGearType[]>("/custom-gear-types"),
-        ]);
-        setGearTypes(gearTypes);
-        setCustomGearTypes(customGearTypes);
-    };
+    if (loading) {
+        return (
+            <Box
+                sx={{
+                    width: "100vw",
+                    height: "100vh",
+                    bgcolor: "white",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                }}
+            >
+                <OctopusSpinner size={96} />
+            </Box>
+        );
+    }
 
     const postGearItem = async (formData: NewGearItemFormState): Promise<number | null> => {
         try {

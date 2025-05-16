@@ -16,14 +16,39 @@ import {
 import AddIcon from "@mui/icons-material/Add";
 import APIService from "../../api/APIService";
 import { Dive } from "../../interfaces";
+import OctopusSpinner from "../../OctopusSpinner";
+import { loadingSpinnerTime } from "../Constants";
 
 function Dives() {
     const navigate = useNavigate();
     const [dives, setDives] = useState<Dive[]>([]);
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        APIService.fetchData<Dive[]>("/dives").then((dives) => setDives(dives));
+        APIService.fetchData<Dive[]>("/dives").then((dives) => {
+            setDives(dives);
+            setTimeout(() => {
+                setLoading(false);
+            }, loadingSpinnerTime);
+        });
     }, []);
+
+    if (loading) {
+        return (
+            <Box
+                sx={{
+                    width: "100vw",
+                    height: "100vh",
+                    bgcolor: "white",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                }}
+            >
+                <OctopusSpinner size={96} />
+            </Box>
+        );
+    }
 
     return (
         <Container maxWidth="lg" sx={{ py: 4 }}>

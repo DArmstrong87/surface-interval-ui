@@ -1,25 +1,39 @@
 import { useState } from "react";
-import TextField from "@mui/material/TextField";
-import FormControlLabel from "@mui/material/FormControlLabel";
-import Checkbox from "@mui/material/Checkbox";
-import Link from "@mui/material/Link";
-import Grid from "@mui/material/Grid";
-import Box from "@mui/material/Box";
-import { Button, Container, ThemeProvider, Typography, createTheme, CircularProgress } from "@mui/material";
+import {
+    TextField,
+    FormControlLabel,
+    Checkbox,
+    Link,
+    Grid,
+    Box,
+    Button,
+    Container,
+    ThemeProvider,
+    Typography,
+    createTheme,
+    CircularProgress,
+    Paper,
+} from "@mui/material";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { LoginForm } from "../interfaces";
 
 const baseURL = "http://127.0.0.1:8000/";
 
 function Login() {
     const defaultTheme = createTheme();
-
     const navigate = useNavigate();
     const [submitHidden, setSubmitHidden] = useState<boolean>(false);
+    const [loginForm, setLoginForm] = useState<LoginForm>({
+        email: "",
+        password: "",
+    });
 
-    const data = {
-        username: "TestUser",
-        password: "123",
+    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setLoginForm({
+            ...loginForm,
+            [e.target.name]: e.target.value,
+        });
     };
 
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
@@ -32,7 +46,7 @@ function Login() {
                 "Content-Type": "application/json",
             },
         });
-        axiosInstance.post(`${baseURL}/login`, data).then((res) => {
+        axiosInstance.post(`${baseURL}/login`, loginForm).then((res) => {
             localStorage.setItem("si_token", res.data.token);
             navigate("/");
         });
@@ -40,78 +54,86 @@ function Login() {
 
     return (
         <ThemeProvider theme={defaultTheme}>
-            <Container maxWidth="xl" fixed sx={{ backgroundColor: "gray" }}>
-                <Typography variant="h1" sx={{ color: "white" }}>
-                    Welcome to Surface Interval
-                </Typography>
-
-                <Box
-                    sx={{
-                        marginTop: 8,
-                        display: "flex",
-                        flexDirection: "column",
-                        alignItems: "center",
-                    }}
-                >
-                    <Typography component="h1" variant="h5">
-                        Sign in
-                    </Typography>
-
-                    <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
-                        <TextField
-                            margin="normal"
-                            required
-                            fullWidth
-                            id="email"
-                            label="Email Address"
-                            name="email"
-                            autoComplete="email"
-                            autoFocus
-                        />
-
-                        <TextField
-                            margin="normal"
-                            required
-                            fullWidth
-                            name="password"
-                            label="Password"
-                            type="password"
-                            id="password"
-                            autoComplete="current-password"
-                        />
-
-                        <FormControlLabel
-                            control={<Checkbox value="remember" color="primary" />}
-                            id="Remember me"
-                            name="Remember me"
-                            label="Remember me"
-                        />
-                        {!submitHidden && (
-                            <Button type="submit" fullWidth id="submitButton" variant="contained" sx={{ mt: 3, mb: 2 }}>
-                                Sign In
-                            </Button>
-                        )}
-                        {submitHidden && (
-                            <Box width={1} sx={{ display: "flex", justifyContent: "center" }}>
-                                <CircularProgress />
-                            </Box>
-                        )}
-
-                        <Grid container>
-                            <Grid item xs>
-                                <Link href="#" variant="body2">
-                                    Forgot password?
-                                </Link>
+            <Box
+                sx={{
+                    minHeight: "100vh",
+                    background: "linear-gradient(135deg, #1976d2 0%, #42a5f5 100%)",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                }}
+            >
+                <Container maxWidth="sm">
+                    <Paper elevation={6} sx={{ p: 4, borderRadius: 3 }}>
+                        <Typography variant="h4" align="center" gutterBottom sx={{ fontWeight: 700 }}>
+                            Welcome to Surface Interval
+                        </Typography>
+                        <Typography component="h1" variant="h6" align="center" sx={{ mb: 2 }}>
+                            Sign in
+                        </Typography>
+                        <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
+                            <TextField
+                                margin="normal"
+                                required
+                                fullWidth
+                                id="email"
+                                label="Email Address"
+                                name="email"
+                                autoComplete="email"
+                                autoFocus
+                                value={loginForm.email}
+                                onChange={handleInputChange}
+                            />
+                            <TextField
+                                margin="normal"
+                                required
+                                fullWidth
+                                name="password"
+                                label="Password"
+                                type="password"
+                                id="password"
+                                autoComplete="current-password"
+                                value={loginForm.password}
+                                onChange={handleInputChange}
+                            />
+                            <FormControlLabel
+                                control={<Checkbox value="remember" color="primary" />}
+                                id="Remember me"
+                                name="Remember me"
+                                label="Remember me"
+                            />
+                            {!submitHidden && (
+                                <Button
+                                    type="submit"
+                                    fullWidth
+                                    id="submitButton"
+                                    variant="contained"
+                                    sx={{ mt: 3, mb: 2 }}
+                                >
+                                    Sign In
+                                </Button>
+                            )}
+                            {submitHidden && (
+                                <Box width={1} sx={{ display: "flex", justifyContent: "center" }}>
+                                    <CircularProgress />
+                                </Box>
+                            )}
+                            <Grid container>
+                                <Grid item xs>
+                                    <Link href="#" variant="body2">
+                                        Forgot password?
+                                    </Link>
+                                </Grid>
+                                <Grid item>
+                                    <Link href="#" variant="body2">
+                                        {"Don't have an account? Sign Up"}
+                                    </Link>
+                                </Grid>
                             </Grid>
-                            <Grid item>
-                                <Link href="#" variant="body2">
-                                    {"Don't have an account? Sign Up"}
-                                </Link>
-                            </Grid>
-                        </Grid>
-                    </Box>
-                </Box>
-            </Container>
+                        </Box>
+                    </Paper>
+                </Container>
+            </Box>
         </ThemeProvider>
     );
 }

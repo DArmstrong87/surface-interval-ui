@@ -14,6 +14,8 @@ import {
     Typography,
     Divider,
 } from "@mui/material";
+import OctopusSpinner from "../../OctopusSpinner";
+import { loadingSpinnerTime } from "../Constants";
 
 export interface DiveFormState {
     depth: number;
@@ -55,9 +57,12 @@ function DivePlanner() {
     const [currentDives, setCurrentDives] = useState<DivePlan[]>([]);
     const [diveFormState, setFormState] = useState<DiveFormState>(initialDiveFormState);
     const [prevDivePG, setPrevDivePG] = useState<string>("");
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         console.log("Listing dives in current plan");
+        // Simulate loading for 500ms
+        setTimeout(() => setLoading(false), loadingSpinnerTime);
     }, [currentDives]);
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -119,6 +124,23 @@ function DivePlanner() {
             air: e.target.value,
         });
     };
+
+    if (loading) {
+        return (
+            <Box
+                sx={{
+                    width: "100vw",
+                    height: "100vh",
+                    bgcolor: "white",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                }}
+            >
+                <OctopusSpinner size={96} />
+            </Box>
+        );
+    }
 
     return (
         <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center", mt: 4 }}>

@@ -3,6 +3,8 @@ import { useNavigate, useParams } from "react-router-dom";
 import APIService from "../../api/APIService";
 import { GearType, CustomGearType, GearItem, GearSet } from "../../interfaces";
 import { Box, Button, Checkbox, Divider, FormControlLabel, Paper, TextField, Typography, Grid } from "@mui/material";
+import OctopusSpinner from "../../OctopusSpinner";
+import { loadingSpinnerTime } from "../Constants";
 
 interface NewGearSetFormState {
     name: string;
@@ -24,25 +26,51 @@ function AddOrEditGearSet() {
     const [customGearTypes, setCustomGearTypes] = useState<CustomGearType[]>([]);
     const [newGearSetForm, setNewGearSetForm] = useState<NewGearSetFormState>(newGearSetInitial);
     const [gearItems, setGearItems] = useState<GearItem[]>([]);
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        APIService.fetchData<GearItem[]>("/gear-items").then((gearItems) => setGearItems(gearItems));
-        APIService.fetchData<GearType[]>("/gear-types").then((gearTypes) => setGearTypes(gearTypes));
-        APIService.fetchData<CustomGearType[]>("/custom-gear-types").then((customGearTypes) =>
-            setCustomGearTypes(customGearTypes),
-        );
-        if (gearSetId) {
-            console.log(gearSetId);
-            APIService.fetchData<GearSet>(`/gear-sets/${gearSetId}`).then((gearSet) => {
-                const formData = {
-                    name: gearSet.name,
-                    weight: gearSet.weight,
-                    gearItemIds: gearSet.gear_items.map((item: GearItem) => item.id),
-                };
-                setNewGearSetForm(formData);
-            });
-        }
+        const fetchAll = async () => {
+            const [gearItemsData, gearTypesData, customGearTypesData] = await Promise.all([
+                APIService.fetchData<GearItem[]>("/gear-items"),
+                APIService.fetchData<GearType[]>("/gear-types"),
+                APIService.fetchData<CustomGearType[]>("/custom-gear-types"),
+            ]);
+            setGearItems(gearItemsData);
+            setGearTypes(gearTypesData);
+            setCustomGearTypes(customGearTypesData);
+            if (gearSetId) {
+                APIService.fetchData<GearSet>(`/gear-sets/${gearSetId}`).then((gearSet) => {
+                    const formData = {
+                        name: gearSet.name,
+                        weight: gearSet.weight,
+                        gearItemIds: gearSet.gear_items.map((item: GearItem) => item.id),
+                    };
+                    setNewGearSetForm(formData);
+                    setTimeout(() => setLoading(false), loadingSpinnerTime);
+                });
+            } else {
+                setTimeout(() => setLoading(false), loadingSpinnerTime);
+            }
+        };
+        fetchAll();
     }, [gearSetId]);
+
+    if (loading) {
+        return (
+            <Box
+                sx={{
+                    width: "100vw",
+                    height: "100vh",
+                    bgcolor: "white",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                }}
+            >
+                <OctopusSpinner size={96} />
+            </Box>
+        );
+    }
 
     const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = event.target;

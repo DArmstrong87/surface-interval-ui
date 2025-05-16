@@ -16,11 +16,14 @@ import {
     Divider,
     Grid,
 } from "@mui/material";
+import OctopusSpinner from "../../OctopusSpinner";
+import { loadingSpinnerTime } from "../Constants";
 
 function Gear() {
     const navigate = useNavigate();
     const [gearSets, setGearSets] = useState<GearSet[]>([]);
     const [gearItems, setGearItems] = useState<GearItem[]>([]);
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -30,9 +33,27 @@ function Gear() {
             ]);
             setGearSets(gearSets);
             setGearItems(gearItems);
+            setTimeout(() => setLoading(false), loadingSpinnerTime);
         };
         fetchData();
     }, []);
+
+    if (loading) {
+        return (
+            <Box
+                sx={{
+                    width: "100vw",
+                    height: "100vh",
+                    bgcolor: "white",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                }}
+            >
+                <OctopusSpinner size={96} />
+            </Box>
+        );
+    }
 
     function gearSetCards(gearSets: GearSet[]) {
         return (
