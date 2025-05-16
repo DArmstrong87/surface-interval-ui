@@ -19,3 +19,5 @@ coverage
 
 # Ignore all HTML files:
 **/*.html
+
+DiveTables.tsx
