@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import APIService from "../../api/APIService";
 import { GearItem, GearItemServiceInterval } from "../../interfaces";
 import { useParams, useNavigate } from "react-router-dom";
@@ -10,13 +10,7 @@ function GearItemDetail() {
     const [gearItemServiceInterval, setGearItemServiceInterval] = useState<GearItemServiceInterval | null>(null);
     const [isLoading, setIsLoading] = useState(true);
 
-    useEffect(() => {
-        setIsLoading(true);
-
-        fetchGearItemAndServiceInterval();
-    }, [gearItemId]);
-
-    const fetchGearItemAndServiceInterval = async () => {
+    const fetchGearItemAndServiceInterval = useCallback(async () => {
         try {
             const [gearItem, gearItemServiceInterval] = await Promise.all([
                 APIService.fetchData<GearItem>(`/gear-items/${gearItemId}`),
@@ -31,7 +25,12 @@ function GearItemDetail() {
         } finally {
             setIsLoading(false);
         }
-    };
+    }, [gearItemId]);
+
+    useEffect(() => {
+        setIsLoading(true);
+        fetchGearItemAndServiceInterval();
+    }, [gearItemId, fetchGearItemAndServiceInterval]);
 
     const deleteGearItem = () => {
         if (window.confirm("Are you sure you want to delete this gear item?")) {
