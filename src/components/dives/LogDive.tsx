@@ -2,6 +2,24 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import APIService from "../../api/APIService";
 import { GearSet, Dive } from "../../interfaces";
+import {
+    Box,
+    Button,
+    FormControl,
+    FormControlLabel,
+    FormLabel,
+    MenuItem,
+    Paper,
+    Radio,
+    RadioGroup,
+    Select,
+    TextField,
+    Typography,
+    InputLabel,
+    SelectChangeEvent,
+} from "@mui/material";
+import OctopusSpinner from "../../OctopusSpinner";
+import { loadingSpinnerTime } from "../Constants";
 
 interface LogDiveFormState {
     date: string;
@@ -35,20 +53,33 @@ function LogDive() {
     // STATE
     const [gearSets, setGearSets] = useState<GearSet[]>([]);
     const [formState, setFormState] = useState<LogDiveFormState>(initialFormState);
+    const [loading, setLoading] = useState(true);
 
     const navigate = useNavigate();
 
     // Set gear sets to populate options
     useEffect(() => {
-        APIService.fetchData<GearSet[]>("/gear-sets").then((gearSets) => setGearSets(gearSets));
+        APIService.fetchData<GearSet[]>("/gear-sets").then((gearSets) => {
+            setGearSets(gearSets);
+            setTimeout(() => setLoading(false), loadingSpinnerTime);
+        });
     }, []);
 
-    function listGearSetOptions(gearSets: GearSet[]) {
-        return gearSets.map((gearSet, index) => (
-            <option key={`gearSetOption-${index}`} value={gearSet.id}>
-                {gearSet.name}
-            </option>
-        ));
+    if (loading) {
+        return (
+            <Box
+                sx={{
+                    width: "100vw",
+                    height: "100vh",
+                    bgcolor: "white",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                }}
+            >
+                <OctopusSpinner size={96} />
+            </Box>
+        );
     }
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -66,17 +97,17 @@ function LogDive() {
         });
     };
 
-    const handleTextareaChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    const handleTextareaChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         setFormState({
             ...formState,
             description: e.target.value,
         });
     };
 
-    const handleSelectChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const handleSelectChange = (e: SelectChangeEvent<number>) => {
         setFormState({
             ...formState,
-            water: e.target.value,
+            gearSet: e.target.value as number,
         });
     };
 
@@ -94,185 +125,130 @@ function LogDive() {
     };
 
     return (
-        <>
-            <h1>Log Dive</h1>
-
-            <form onSubmit={handleLogDiveSubmit}>
-                <fieldset>
-                    <label key={"dateLabel"} htmlFor="date">
-                        Date
-                    </label>
-                    <input
-                        key={"dateInput"}
-                        id="date"
+        <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center", mt: 4 }}>
+            <Paper elevation={3} sx={{ p: 4, maxWidth: 500, width: "100%" }}>
+                <Typography variant="h4" component="h1" gutterBottom align="center">
+                    Log Dive
+                </Typography>
+                <Box
+                    component="form"
+                    onSubmit={handleLogDiveSubmit}
+                    sx={{ display: "flex", flexDirection: "column", gap: 2 }}
+                >
+                    <TextField
+                        label="Date"
                         name="date"
                         type="date"
                         value={formState.date}
-                        required
                         onChange={handleInputChange}
+                        InputLabelProps={{ shrink: true }}
+                        required
+                        fullWidth
                     />
-                </fieldset>
-
-                <fieldset>
-                    <label key={"locationLabel"} htmlFor="location">
-                        Location
-                    </label>
-                    <input
-                        key={"locationInput"}
-                        id="location"
+                    <TextField
+                        label="Location"
                         name="location"
                         type="text"
                         value={formState.location}
-                        required
                         onChange={handleInputChange}
+                        required
+                        fullWidth
                     />
-                </fieldset>
-
-                <fieldset>
-                    <label key={"siteLabel"} htmlFor="site">
-                        Site
-                    </label>
-                    <input
-                        key={"siteInput"}
-                        id="site"
+                    <TextField
+                        label="Site"
                         name="site"
                         type="text"
                         value={formState.site}
-                        required
                         onChange={handleInputChange}
+                        required
+                        fullWidth
                     />
-                </fieldset>
-
-                <fieldset id="waterOptions">
-                    <label key={"waterLabelFresh"} htmlFor="waterRadioFresh">
-                        Fresh
-                    </label>
-                    <input
-                        key={"waterRadioFresh"}
-                        id="waterRadioFresh"
-                        type="radio"
-                        value="Fresh"
-                        checked={formState.water === "Fresh"}
-                        onChange={handleRadioChange}
-                    />
-                    <label key={"waterLabelSalt"} htmlFor="waterRadioSalt">
-                        Salt
-                    </label>
-                    <input
-                        key={"waterRadioSalt"}
-                        id="waterRadioSalt"
-                        type="radio"
-                        value="Salt"
-                        checked={formState.water === "Salt"}
-                        onChange={handleRadioChange}
-                    />
-                </fieldset>
-
-                <fieldset>
-                    <label key={"depthLabel"} htmlFor="depth">
-                        Depth
-                    </label>
-                    <input
-                        key={"depthInput"}
-                        id="depth"
+                    <FormControl component="fieldset">
+                        <FormLabel component="legend">Water</FormLabel>
+                        <RadioGroup row name="water" value={formState.water} onChange={handleRadioChange}>
+                            <FormControlLabel value="Fresh" control={<Radio />} label="Fresh" />
+                            <FormControlLabel value="Salt" control={<Radio />} label="Salt" />
+                        </RadioGroup>
+                    </FormControl>
+                    <TextField
+                        label="Depth (ft)"
                         name="depth"
                         type="number"
-                        step={1}
-                        value={String(formState.depth)}
-                        required
+                        value={formState.depth}
                         onChange={handleInputChange}
+                        required
+                        fullWidth
                     />
-                </fieldset>
-
-                <fieldset>
-                    <label key={"timeLabel"} htmlFor="time">
-                        Time (mins)
-                    </label>
-                    <input
-                        key={"timeInput"}
-                        id="time"
+                    <TextField
+                        label="Time (mins)"
                         name="time"
                         type="number"
-                        step={1}
-                        value={String(formState.time)}
-                        required
+                        value={formState.time}
                         onChange={handleInputChange}
+                        required
+                        fullWidth
                     />
-                </fieldset>
-
-                <fieldset>
-                    <label key={"descriptionLabel"} htmlFor="description">
-                        Description
-                    </label>
-                    <textarea
-                        key={"descriptionInput"}
-                        id="description"
+                    <TextField
+                        label="Description"
                         name="description"
                         value={formState.description}
                         onChange={handleTextareaChange}
+                        multiline
+                        minRows={2}
+                        fullWidth
                     />
-                </fieldset>
-
-                <fieldset>
-                    <label key={"startPressureLabel"} htmlFor="startPressure">
-                        Starting Tank Pressure
-                    </label>
-                    <input
-                        key={"startPressureInput"}
-                        id="startPressure"
-                        name="startPressure"
-                        type="number"
-                        step={1}
-                        value={String(formState.startPressure)}
-                        onChange={handleInputChange}
-                    />
-                    <label key={"endPressureLabel"} htmlFor="endPressure">
-                        Ending Tank Pressure
-                    </label>
-                    <input
-                        key={"endPressureInput"}
-                        id="endPressure"
-                        name="endPressure"
-                        type="number"
-                        step={1}
-                        value={String(formState.endPressure)}
-                        onChange={handleInputChange}
-                    />
-                </fieldset>
-
-                <fieldset>
-                    <label key={"tankVolLabel"} htmlFor="tankVol">
-                        Tank volume (cubic feet)
-                    </label>
-                    <input
-                        key={"tankVolInput"}
-                        id="tankVol"
+                    <Box sx={{ display: "flex", gap: 2 }}>
+                        <TextField
+                            label="Start Pressure"
+                            name="startPressure"
+                            type="number"
+                            value={formState.startPressure}
+                            onChange={handleInputChange}
+                            fullWidth
+                        />
+                        <TextField
+                            label="End Pressure"
+                            name="endPressure"
+                            type="number"
+                            value={formState.endPressure}
+                            onChange={handleInputChange}
+                            fullWidth
+                        />
+                    </Box>
+                    <TextField
+                        label="Tank Volume (cubic feet)"
                         name="tankVol"
                         type="number"
-                        step={1}
-                        value={String(formState.tankVol)}
+                        value={formState.tankVol}
                         onChange={handleInputChange}
+                        fullWidth
                     />
-                </fieldset>
-
-                <fieldset>
-                    <select
-                        key={"gearSetSelect"}
-                        name="gearSetSelect"
-                        id="gearSetSelect"
-                        value={formState.gearSet}
-                        onChange={handleSelectChange}
-                    >
-                        <option value={0} disabled>
-                            Gear Set Used
-                        </option>
-                        {listGearSetOptions(gearSets)}
-                    </select>
-                </fieldset>
-
-                <button type="submit">Log Dive</button>
-            </form>
-        </>
+                    <FormControl fullWidth>
+                        <InputLabel id="gearSet-label">Gear Set Used</InputLabel>
+                        <Select
+                            labelId="gearSet-label"
+                            id="gearSetSelect"
+                            name="gearSet"
+                            value={formState.gearSet}
+                            label="Gear Set Used"
+                            onChange={handleSelectChange}
+                        >
+                            <MenuItem value={0} disabled>
+                                Gear Set Used
+                            </MenuItem>
+                            {gearSets.map((gearSet, index) => (
+                                <MenuItem key={`gearSetOption-${index}`} value={gearSet.id}>
+                                    {gearSet.name}
+                                </MenuItem>
+                            ))}
+                        </Select>
+                    </FormControl>
+                    <Button type="submit" variant="contained" color="primary" size="large" sx={{ mt: 2 }}>
+                        Log Dive
+                    </Button>
+                </Box>
+            </Paper>
+        </Box>
     );
 }
 

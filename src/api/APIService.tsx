@@ -2,11 +2,10 @@ import axios, { AxiosResponse, AxiosError } from "axios";
 
 const BASE_URL = "http://127.0.0.1:8000/";
 
-// Create a service class to handle API calls
 class APIService {
     private axiosInstance = axios.create({
         baseURL: BASE_URL,
-        timeout: 10000, // Example timeout
+        timeout: 10000,
         headers: {
             "Content-Type": "application/json",
             Authorization: `Token ${localStorage.getItem("si_token")}`,

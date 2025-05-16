@@ -1,6 +1,21 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { planDive } from "./PlanDive";
 import { AIR, EANx32, EANx36 } from "./DiveTables";
+import {
+    Box,
+    Button,
+    FormControl,
+    FormControlLabel,
+    FormLabel,
+    Paper,
+    Radio,
+    RadioGroup,
+    TextField,
+    Typography,
+    Divider,
+} from "@mui/material";
+import OctopusSpinner from "../../OctopusSpinner";
+import { loadingSpinnerTime } from "../Constants";
 
 export interface DiveFormState {
     depth: number;
@@ -42,15 +57,20 @@ function DivePlanner() {
     const [currentDives, setCurrentDives] = useState<DivePlan[]>([]);
     const [diveFormState, setFormState] = useState<DiveFormState>(initialDiveFormState);
     const [prevDivePG, setPrevDivePG] = useState<string>("");
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         console.log("Listing dives in current plan");
+        // Simulate loading for 500ms
+        setTimeout(() => setLoading(false), loadingSpinnerTime);
     }, [currentDives]);
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const intValue = parseInt(e.target.value) || 0;
-
-        // Set form state
+        const value = e.target.value;
+        let intValue = parseInt(value) || 0;
+        if (e.target.name === "depth" || e.target.name === "time") {
+            intValue = Math.min(intValue, parseInt(e.target.max));
+        }
         setFormState({
             ...diveFormState,
             [e.target.name]: intValue,
@@ -105,216 +125,178 @@ function DivePlanner() {
         });
     };
 
+    if (loading) {
+        return (
+            <Box
+                sx={{
+                    width: "100vw",
+                    height: "100vh",
+                    bgcolor: "white",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                }}
+            >
+                <OctopusSpinner size={96} />
+            </Box>
+        );
+    }
+
     return (
-        <>
-            <h1>Dive Planner</h1>
-            <article>
-                <section>
-                    <h1>Plan the dive, dive the plan.</h1>
-                    <p>
+        <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center", mt: 4 }}>
+            <Paper elevation={3} sx={{ p: 4, maxWidth: 600, width: "100%" }}>
+                <Typography variant="h4" component="h1" gutterBottom align="center">
+                    Dive Planner
+                </Typography>
+                <Box sx={{ mb: 3 }}>
+                    <Typography variant="h6" gutterBottom>
+                        Plan the dive, dive the plan.
+                    </Typography>
+                    <Typography variant="body2" color="text.secondary" paragraph>
                         This dive planner uses the PADI Recreational Dive Planner. It is designed for new Open Water
                         students to practice their dive planning skills as well as anyone planning a single dive or
                         multiple dives. The dive planner informs the diver if a planned dive is relatively safe
                         regarding nitrogen exposure only.
-                    </p>
-                    <p>
+                    </Typography>
+                    <Typography variant="body2" color="text.secondary" paragraph>
                         Other factors can increase risk of developing decompression illness beyond depth, time and
                         ascent rate, including dehydration, thermal stress, exertion, general fitness, post-dive air
                         travel, etc. The dive planner can NOT predict diver behavior, dive conditions or in any way
                         ensure dive safety prior to or during a dive. Remember to use a reliable dive computer and
                         always dive within your limits.
-                    </p>
-                </section>
-
-                {currentDives.length > 0
-                    ? currentDives.map((dive, index) => (
-                          <React.Fragment key={`diveFrag-${index}`}>
-                              <section key={`dive-${index}`}>
-                                  {/* Subsequent dives will display surface interval and starting pressure group */}
-                                  {index !== 0 ? (
-                                      <>
-                                          <p key={`diveSI-${index}`}>
-                                              Surface Interval: {dive.surfaceInterval} minutes
-                                          </p>
-                                          <p key={`diveStartPG-${index}`}>
-                                              Starting Pressure Group: {dive.startingPressureGroup}
-                                          </p>
-                                      </>
-                                  ) : (
-                                      ""
-                                  )}
-                                  <p key={`diveDepth-${index}`}>Depth: {dive.depth}</p>
-                                  {/* Subsequent dives will show addition of ABT and RNT for TBT */}
-                                  {index !== 0 ? (
-                                      <React.Fragment key={`diveTimesFrag-${index}`}>
-                                          <p key={`diveABT-${index}`}>
-                                              Actual Bottom Time: {dive.actualBottomTime} minutes
-                                          </p>
-                                          <p key={`diveRNT-${index}`}>
-                                              + Residual nitrogen time: {dive.residualNitrogenTime} minutes
-                                          </p>
-                                          <p key={`diveTBT-${index}`}>
-                                              = Total bottom time: {dive.totalBottomTime} minutes
-                                          </p>
-                                      </React.Fragment>
-                                  ) : (
-                                      <p key={`diveTime-${index}`}>Total Bottom Time: {dive.totalBottomTime}</p>
-                                  )}
-
-                                  <p key={`divePG-${index}`}>Pressure Group: {dive.postDivePressureGroup}</p>
-                                  <p key={`diveSSRequired-${index}`}>
-                                      Safety Stop Required:
-                                      {dive.safetyStop.required ? ` ${dive.safetyStop.length} minutes` : " No"}
-                                  </p>
-                                  {dive.ppo !== null ? (
-                                      <>
-                                          <p> ppO2: {dive.ppo.value} </p>
-                                          {dive.ppo.value > 1.4 ? <b> {dive.ppo.warning} </b> : ""}
-                                      </>
-                                  ) : (
-                                      ""
-                                  )}
-                                  {/* Decompression Limit */}
-                                  {dive.decoLimit.met ? (
-                                      <>
-                                          <p key={`diveMinToNDL-${index}`}>
-                                              <b>{dive.decoLimit.warning}</b>
-                                          </p>
-                                      </>
-                                  ) : (
-                                      ""
-                                  )}
-                                  {/* Pre-flight surface interval minimums */}
-                                  <p key={`diveFlightSI-${index}`}>
-                                      Pre-flight surface interval:
-                                      {index === 0 && !dive.decoLimit.met
-                                          ? " 12 hours. If this dive follows multi-day dives, the minimum pre-flight surface interval is 18 hours."
-                                          : dive.preFlightSI}
-                                  </p>
-                                  <hr />
-                              </section>
-                          </React.Fragment>
-                      ))
-                    : ""}
-
-                <section>
-                    {currentDives.length > 0 ? (
+                    </Typography>
+                </Box>
+                {currentDives.length > 0 && (
+                    <Box sx={{ mb: 3 }}>
+                        <Typography variant="h6" gutterBottom>
+                            Planned Dives
+                        </Typography>
+                        {currentDives.map((dive, index) => (
+                            <Paper key={`dive-${index}`} sx={{ p: 2, mb: 2, background: "#f5f5f5" }}>
+                                {index !== 0 && (
+                                    <>
+                                        <Typography variant="body2">
+                                            Surface Interval: {dive.surfaceInterval} minutes
+                                        </Typography>
+                                        <Typography variant="body2">
+                                            Starting Pressure Group: {dive.startingPressureGroup}
+                                        </Typography>
+                                    </>
+                                )}
+                                <Typography variant="body2">Depth: {dive.depth}</Typography>
+                                {index !== 0 ? (
+                                    <>
+                                        <Typography variant="body2">
+                                            Actual Bottom Time: {dive.actualBottomTime} minutes
+                                        </Typography>
+                                        <Typography variant="body2">
+                                            + Residual nitrogen time: {dive.residualNitrogenTime} minutes
+                                        </Typography>
+                                        <Typography variant="body2">
+                                            = Total bottom time: {dive.totalBottomTime} minutes
+                                        </Typography>
+                                    </>
+                                ) : (
+                                    <Typography variant="body2">Total Bottom Time: {dive.totalBottomTime}</Typography>
+                                )}
+                                <Typography variant="body2">Pressure Group: {dive.postDivePressureGroup}</Typography>
+                                <Typography variant="body2">
+                                    Safety Stop Required:{" "}
+                                    {dive.safetyStop.required ? `${dive.safetyStop.length} minutes` : "No"}
+                                </Typography>
+                                <Typography variant="body2">
+                                    Pre-flight surface interval:{" "}
+                                    {index === 0 && !dive.decoLimit.met
+                                        ? "12 hours. If this dive follows multi-day dives, the minimum pre-flight surface interval is 18 hours."
+                                        : dive.preFlightSI}
+                                </Typography>
+                                {dive.ppo !== null && (
+                                    <>
+                                        <Typography variant="body2">ppO2: {dive.ppo.value}</Typography>
+                                        {dive.ppo.value > 1.4 && (
+                                            <Typography color="error">{dive.ppo.warning}</Typography>
+                                        )}
+                                    </>
+                                )}
+                                {dive.decoLimit.met && (
+                                    <Typography color="error" fontWeight={600}>
+                                        {dive.decoLimit.warning}
+                                    </Typography>
+                                )}
+                            </Paper>
+                        ))}
+                    </Box>
+                )}
+                <Divider sx={{ mb: 3 }} />
+                <Box component="form" sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
+                    {currentDives.length > 0 && (
                         <>
-                            {prevDivePG === "Y" || prevDivePG === "Z"
-                                ? `Previous dive's pressure group is "${prevDivePG}". The minimum suggested surface interval is 3 hours (180 minutes)`
-                                : ""}
-                            <fieldset>
-                                <label key={"surfaceIntervalLabel"} htmlFor="inputSurfaceInterval">
-                                    Surface Interval (mins)
-                                </label>
-                                <input
-                                    key={"surfaceIntervalInput"}
-                                    id="inputSurfaceInterval"
-                                    name="surfaceInterval"
-                                    type="text"
-                                    inputMode="numeric"
-                                    pattern="[0-9]*"
-                                    min={prevDivePG === "Y" || prevDivePG === "Z" ? 180 : 0}
-                                    value={diveFormState.surfaceInterval || 0}
-                                    required
-                                    onChange={handleInputChange}
-                                />
-                            </fieldset>
+                            {(prevDivePG === "Y" || prevDivePG === "Z") && (
+                                <Typography color="warning.main" fontWeight={600}>
+                                    Previous dive's pressure group is "{prevDivePG}". The minimum suggested surface
+                                    interval is 3 hours (180 minutes)
+                                </Typography>
+                            )}
+                            <TextField
+                                label="Surface Interval (mins)"
+                                name="surfaceInterval"
+                                type="number"
+                                inputProps={{ min: prevDivePG === "Y" || prevDivePG === "Z" ? 180 : 0 }}
+                                value={diveFormState.surfaceInterval || 0}
+                                required
+                                onChange={handleInputChange}
+                                fullWidth
+                            />
                         </>
-                    ) : (
-                        ""
                     )}
-                    {/* Air Selection */}
-                    {currentDives.length === 0 ? (
-                        <>
-                            <fieldset>
-                                <input
-                                    key={"airRadio"}
-                                    id="air"
-                                    type="radio"
-                                    value={AIR}
-                                    checked={diveFormState.air === AIR}
-                                    onChange={handleRadioChange}
-                                />
-                                <label key={"airLabel"} htmlFor="air">
-                                    Air
-                                </label>
-                                <input
-                                    key={`${EANx32}Radio`}
-                                    id={EANx32}
-                                    type="radio"
-                                    value={EANx32}
-                                    checked={diveFormState.air === EANx32}
-                                    onChange={handleRadioChange}
-                                />
-                                <label key={`${EANx32}Label`} htmlFor={EANx32}>
-                                    {EANx32}
-                                </label>
-                                <input
-                                    key={`${EANx36}Radio`}
-                                    id={EANx36}
-                                    type="radio"
-                                    value={EANx36}
-                                    checked={diveFormState.air === EANx36}
-                                    onChange={handleRadioChange}
-                                />
-                                <label key={`${EANx36}Label`} htmlFor={EANx36}>
-                                    {EANx36}
-                                </label>
-                            </fieldset>
-                        </>
-                    ) : (
-                        ""
+                    {currentDives.length === 0 && (
+                        <FormControl component="fieldset">
+                            <FormLabel component="legend">Air Selection</FormLabel>
+                            <RadioGroup row name="air" value={diveFormState.air} onChange={handleRadioChange}>
+                                <FormControlLabel value={AIR} control={<Radio />} label="Air" />
+                                <FormControlLabel value={EANx32} control={<Radio />} label={EANx32} />
+                                <FormControlLabel value={EANx36} control={<Radio />} label={EANx36} />
+                            </RadioGroup>
+                        </FormControl>
                     )}
-
-                    <fieldset>
-                        <label key={"depthLabel"} htmlFor="inputDepth">
-                            Depth
-                        </label>
-                        <input
-                            key={"depthInput"}
-                            id="inputDepth"
-                            name="depth"
-                            type="text"
-                            inputMode="numeric"
-                            pattern="[0-9]*"
-                            value={diveFormState.depth || 0}
-                            required
-                            onChange={handleInputChange}
-                        />
-                    </fieldset>
-
-                    <fieldset>
-                        <label key={"timeLabel"} htmlFor="inputTime">
-                            Time (mins)
-                        </label>
-                        <input
-                            key={"timeInput"}
-                            id="inputTime"
-                            name="time"
-                            type="text"
-                            inputMode="numeric"
-                            pattern="[0-9]*"
-                            value={diveFormState.time || 0}
-                            min="0"
-                            required
-                            onChange={handleInputChange}
-                        />
-                    </fieldset>
-
-                    <button
-                        onClick={handleSubmit}
-                        id="diveBtn"
-                        disabled={diveFormState.depth <= 0 || diveFormState.time <= 0}
-                    >
-                        Dive
-                    </button>
-                    <button onClick={handleReset} id="resetBtn">
-                        Reset
-                    </button>
-                </section>
-            </article>
-        </>
+                    <TextField
+                        label="Depth (ft)"
+                        name="depth"
+                        type="number"
+                        value={diveFormState.depth.toString().replace(/^0+(?=\d)/, "") || 0}
+                        required
+                        onChange={handleInputChange}
+                        inputProps={{ min: 0, max: 140 }}
+                        fullWidth
+                    />
+                    <TextField
+                        label="Time (mins)"
+                        name="time"
+                        type="number"
+                        value={diveFormState.time.toString().replace(/^0+(?=\d)/, "") || 0}
+                        inputProps={{ min: 0, max: 205 }}
+                        required
+                        onChange={handleInputChange}
+                        fullWidth
+                    />
+                    <Box sx={{ display: "flex", gap: 2, mt: 2 }}>
+                        <Button
+                            onClick={handleSubmit}
+                            id="diveBtn"
+                            variant="contained"
+                            color="primary"
+                            disabled={diveFormState.depth <= 0 || diveFormState.time <= 0}
+                            fullWidth
+                        >
+                            Dive
+                        </Button>
+                        <Button onClick={handleReset} id="resetBtn" variant="outlined" color="secondary" fullWidth>
+                            Reset
+                        </Button>
+                    </Box>
+                </Box>
+            </Paper>
+        </Box>
     );
 }
 

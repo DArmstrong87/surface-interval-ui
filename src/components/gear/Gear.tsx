@@ -2,11 +2,28 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import APIService from "../../api/APIService";
 import { GearItem, GearSet } from "../../interfaces";
+import {
+    Box,
+    Button,
+    Typography,
+    Paper,
+    Table,
+    TableBody,
+    TableCell,
+    TableContainer,
+    TableHead,
+    TableRow,
+    Divider,
+    Grid,
+} from "@mui/material";
+import OctopusSpinner from "../../OctopusSpinner";
+import { loadingSpinnerTime } from "../Constants";
 
 function Gear() {
     const navigate = useNavigate();
     const [gearSets, setGearSets] = useState<GearSet[]>([]);
     const [gearItems, setGearItems] = useState<GearItem[]>([]);
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -16,82 +33,129 @@ function Gear() {
             ]);
             setGearSets(gearSets);
             setGearItems(gearItems);
+            setTimeout(() => setLoading(false), loadingSpinnerTime);
         };
         fetchData();
     }, []);
 
+    if (loading) {
+        return (
+            <Box
+                sx={{
+                    width: "100vw",
+                    height: "100vh",
+                    bgcolor: "white",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                }}
+            >
+                <OctopusSpinner size={96} />
+            </Box>
+        );
+    }
+
     function gearSetCards(gearSets: GearSet[]) {
-        return gearSets.map((gearSet, index) => (
-            <div key={`${index}-gear-set-card`}>
-                <h2 onClick={() => navigate(`/gear/gear-set/${gearSet.id}`)}>{gearSet.name}</h2>
-                <div key={`${index}-gear-card-div`}>
-                    <table>
-                        <thead>
-                            <tr>
-                                <td>Item</td>
-                                <td>Type</td>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {gearSet.gear_items.map((gearItem, index) => (
-                                <tr
-                                    key={`${index}-gear-item-table-row`}
-                                    onClick={() => navigate(`/gear/${gearItem.id}`)}
-                                >
-                                    <td>{gearItem?.name}</td>
-                                    <td>{gearItem?.gear_type?.name}</td>
-                                </tr>
-                            ))}
-                            <tr key={`${index}-gear-item-weight`}>
-                                <td>Weight: {gearSet.weight}</td>
-                                <td></td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        ));
+        return (
+            <Grid container spacing={2}>
+                {gearSets.map((gearSet, index) => (
+                    <Grid item xs={12} md={6} key={`${index}-gear-set-card`}>
+                        <Paper elevation={3} sx={{ p: 2 }}>
+                            <Typography
+                                variant="h6"
+                                sx={{ cursor: "pointer", mb: 1, ":hover": { color: "primary.main" } }}
+                                onClick={() => navigate(`/gear/gear-set/${gearSet.id}`)}
+                            >
+                                {gearSet.name}
+                            </Typography>
+                            <TableContainer>
+                                <Table size="small">
+                                    <TableHead>
+                                        <TableRow>
+                                            <TableCell>Item</TableCell>
+                                            <TableCell>Type</TableCell>
+                                        </TableRow>
+                                    </TableHead>
+                                    <TableBody>
+                                        {gearSet.gear_items.map((gearItem, idx) => (
+                                            <TableRow
+                                                key={`${idx}-gear-item-table-row`}
+                                                hover
+                                                sx={{ cursor: "pointer" }}
+                                                onClick={() => navigate(`/gear/${gearItem.id}`)}
+                                            >
+                                                <TableCell>{gearItem?.name}</TableCell>
+                                                <TableCell>{gearItem?.gear_type?.name}</TableCell>
+                                            </TableRow>
+                                        ))}
+                                        <TableRow>
+                                            <TableCell>Weight: {gearSet.weight}</TableCell>
+                                            <TableCell></TableCell>
+                                        </TableRow>
+                                    </TableBody>
+                                </Table>
+                            </TableContainer>
+                        </Paper>
+                    </Grid>
+                ))}
+            </Grid>
+        );
     }
 
     function gearItemList(gearItems: GearItem[]) {
         return gearItems.map((gearItem, index) => (
-            <tr key={`${index}-gear-items-table-row`} onClick={() => navigate(`/gear/${gearItem.id}`)}>
-                <td>{gearItem.name}</td>
-                {/* Look for gear type or custom gear type name, else "Unknown" */}
-                <td>{gearItem.gear_type?.name || gearItem.custom_gear_type?.name || "Unknown Type"}</td>
-            </tr>
+            <TableRow
+                key={`${index}-gear-items-table-row`}
+                hover
+                sx={{ cursor: "pointer" }}
+                onClick={() => navigate(`/gear/${gearItem.id}`)}
+            >
+                <TableCell>{gearItem.name}</TableCell>
+                <TableCell>{gearItem.gear_type?.name || gearItem.custom_gear_type?.name || "Unknown Type"}</TableCell>
+            </TableRow>
         ));
     }
 
     return (
-        <>
-            <h1>Gear</h1>
-
-            <button onClick={() => navigate("./add")}>Add Gear</button>
-            {gearItems.length > 0 && <button onClick={() => navigate("./add-gear-set")}>Add Gear Set</button>}
-
-            <div>{gearSetCards(gearSets)}</div>
-
-            <hr />
-
-            {gearItems && gearItems.length > 0 && (
-                <table>
-                    <thead>
-                        <tr>
-                            <th>All Gear Items</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>Name</td>
-                            <td>Type</td>
-                        </tr>
-                        {gearItemList(gearItems)}
-                    </tbody>
-                </table>
+        <Box sx={{ maxWidth: 900, mx: "auto", mt: 4, p: 2 }}>
+            <Typography variant="h4" gutterBottom align="center">
+                Gear
+            </Typography>
+            <Box sx={{ display: "flex", gap: 2, mb: 3 }}>
+                <Button variant="contained" color="primary" onClick={() => navigate("./add")}>
+                    Add Gear
+                </Button>
+                {gearItems.length > 0 && (
+                    <Button variant="outlined" color="primary" onClick={() => navigate("./add-gear-set")}>
+                        Add Gear Set
+                    </Button>
+                )}
+            </Box>
+            {gearSets.length > 0 && <Box sx={{ mb: 4 }}>{gearSetCards(gearSets)}</Box>}
+            <Divider sx={{ my: 4 }} />
+            {gearItems && gearItems.length > 0 ? (
+                <Paper elevation={2} sx={{ p: 2 }}>
+                    <Typography variant="h6" gutterBottom>
+                        All Gear Items
+                    </Typography>
+                    <TableContainer>
+                        <Table size="small">
+                            <TableHead>
+                                <TableRow>
+                                    <TableCell>Name</TableCell>
+                                    <TableCell>Type</TableCell>
+                                </TableRow>
+                            </TableHead>
+                            <TableBody>{gearItemList(gearItems)}</TableBody>
+                        </Table>
+                    </TableContainer>
+                </Paper>
+            ) : (
+                <Typography color="text.secondary" align="center">
+                    No gear items created.
+                </Typography>
             )}
-            {gearItems && gearItems.length === 0 && <p>No gear items created.</p>}
-        </>
+        </Box>
     );
 }
 
