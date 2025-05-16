@@ -6,7 +6,6 @@ function Home() {
     return (
         <div className="App">
             <header className="App-header" style={{ backgroundColor: "white" }}>
-                {/* <img src={SI_splash} alt="logo" style={{ maxWidth: "fit-content", margin: "0 auto" }} /> */}
                 <Box
                     display="flex"
                     justifyContent="center"

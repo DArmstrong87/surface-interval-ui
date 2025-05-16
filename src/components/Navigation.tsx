@@ -61,7 +61,6 @@ export default function ButtonAppBar() {
                                     borderRadius: 1,
                                     ":hover": {
                                         color: "orange",
-                                        // background: "rgba(255,255,255,0.1)",
                                         transition: "all 0.5s",
                                     },
                                 }}

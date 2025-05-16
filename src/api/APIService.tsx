@@ -5,7 +5,7 @@ const BASE_URL = "http://127.0.0.1:8000/";
 class APIService {
     private axiosInstance = axios.create({
         baseURL: BASE_URL,
-        timeout: 1000,
+        timeout: 10000,
         headers: {
             "Content-Type": "application/json",
             Authorization: `Token ${localStorage.getItem("si_token")}`,
