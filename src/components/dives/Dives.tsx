@@ -1,5 +1,19 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import {
+    Container,
+    Typography,
+    Button,
+    Paper,
+    Table,
+    TableBody,
+    TableCell,
+    TableContainer,
+    TableHead,
+    TableRow,
+    Box,
+} from "@mui/material";
+import AddIcon from "@mui/icons-material/Add";
 import APIService from "../../api/APIService";
 import { Dive } from "../../interfaces";
 
@@ -11,46 +25,53 @@ function Dives() {
         APIService.fetchData<Dive[]>("/dives").then((dives) => setDives(dives));
     }, []);
 
-    function diveList(dives: Dive[]) {
-        return dives.map((dive, index) => (
-            <tr key={index}>
-                <td key={`${index}-num`}>{dive.dive_number}</td>
-                <td key={`${index}-date`}>{dive.date}</td>
-                <td key={`${index}-location`}>{dive.location}</td>
-                <td key={`${index}-site`}>{dive.site}</td>
-                <td key={`${index}-water`}>{dive.water}</td>
-                <td key={`${index}-depth`}>{dive.depth}</td>
-                <td key={`${index}-time`}>{dive.time}</td>
-            </tr>
-        ));
-    }
-
     return (
-        <>
-            <h1>Dive Log</h1>
+        <Container maxWidth="lg" sx={{ py: 4 }}>
+            <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 3 }}>
+                <Typography variant="h4" component="h1" gutterBottom>
+                    Dive Log
+                </Typography>
+                <Button variant="contained" color="primary" startIcon={<AddIcon />} onClick={() => navigate("logDive")}>
+                    Log Dive
+                </Button>
+            </Box>
 
-            <button onClick={() => navigate("logDive")}>Log Dive</button>
-
-            <table>
-                <thead>
-                    <tr>
-                        <th>Dive Log</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>Number</td>
-                        <td>Date</td>
-                        <td>Location</td>
-                        <td>Site</td>
-                        <td>Water</td>
-                        <td>Depth</td>
-                        <td>Time</td>
-                    </tr>
-                    {diveList(dives)}
-                </tbody>
-            </table>
-        </>
+            <TableContainer component={Paper} elevation={3}>
+                <Table sx={{ minWidth: 650 }} aria-label="dive log table">
+                    <TableHead>
+                        <TableRow sx={{ backgroundColor: "primary.main" }}>
+                            <TableCell sx={{ color: "white" }}>Number</TableCell>
+                            <TableCell sx={{ color: "white" }}>Date</TableCell>
+                            <TableCell sx={{ color: "white" }}>Location</TableCell>
+                            <TableCell sx={{ color: "white" }}>Site</TableCell>
+                            <TableCell sx={{ color: "white" }}>Water</TableCell>
+                            <TableCell sx={{ color: "white" }}>Depth</TableCell>
+                            <TableCell sx={{ color: "white" }}>Time</TableCell>
+                        </TableRow>
+                    </TableHead>
+                    <TableBody>
+                        {dives.map((dive, index) => (
+                            <TableRow
+                                key={index}
+                                sx={{
+                                    "&:nth-of-type(odd)": { backgroundColor: "action.hover" },
+                                    "&:hover": { cursor: "pointer" },
+                                }}
+                                onClick={() => navigate(`/dives/${dive.id}`)}
+                            >
+                                <TableCell>{dive.dive_number}</TableCell>
+                                <TableCell>{dive.date}</TableCell>
+                                <TableCell>{dive.location}</TableCell>
+                                <TableCell>{dive.site}</TableCell>
+                                <TableCell>{dive.water}</TableCell>
+                                <TableCell>{dive.depth}</TableCell>
+                                <TableCell>{dive.time}</TableCell>
+                            </TableRow>
+                        ))}
+                    </TableBody>
+                </Table>
+            </TableContainer>
+        </Container>
     );
 }
 
