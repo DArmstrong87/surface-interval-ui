@@ -12,18 +12,15 @@ function Gear() {
 
 
     useEffect(() => {
-        APIService.fetchData("/gear-sets")
-            .then(gearSets => setGearSets(gearSets))
-            .catch(error => {
-                console.error("Error fetching gear sets:", error);
-                setGearSets([]);
-            });
-        APIService.fetchData("/gear-items")
-            .then(gearItems => setGearItems(gearItems))
-            .catch(error => {
-                console.error("Error fetching gear items:", error);
-                setGearItems([]);
-            });
+        const fetchData = async () => {
+            const [gearSets, gearItems] = await Promise.all([
+                APIService.fetchData("/gear-sets"),
+                APIService.fetchData("/gear-items")
+            ])
+            setGearSets(gearSets)
+            setGearItems(gearItems)
+        }
+        fetchData()
     }, [])
 
     function gearSetCards(gearSets: GearSet[]) {
@@ -85,24 +82,29 @@ function Gear() {
             {gearSetCards(gearSets)}
         </div>
 
-        <hr/>
+        <hr />
 
-        <table>
-            <thead>
-                <tr>
-                    <th>
-                        All Gear Items
-                    </th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>Name</td>
-                    <td>Type</td>
-                </tr>
-                {gearItemList(gearItems)}
-            </tbody>
-        </table>
+        {gearItems && gearItems.length > 0 &&
+            <table>
+                <thead>
+                    <tr>
+                        <th>
+                            All Gear Items
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Name</td>
+                        <td>Type</td>
+                    </tr>
+                    {gearItemList(gearItems)}
+                </tbody>
+            </table>
+        }
+        {gearItems && gearItems.length === 0 &&
+            <p>No gear items created.</p>
+        }
     </>
     );
 }

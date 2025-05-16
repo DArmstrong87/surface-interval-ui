@@ -35,12 +35,17 @@ function AddGear() {
     const [gearTypeError, setGearTypeError] = useState(false);
 
     useEffect(() => {
-        APIService.fetchData("/gear-types")
-            .then(gearTypes => setGearTypes(gearTypes))
-        APIService.fetchData("/custom-gear-types")
-            .then(customGearTypes => setCustomGearTypes(customGearTypes))
+        fetchData()
+    }, [])
+
+    const fetchData = async () => {
+        const [gearTypes, customGearTypes] = await Promise.all([
+            APIService.fetchData("/gear-types"),
+            APIService.fetchData("/custom-gear-types")
+        ])
+        setGearTypes(gearTypes)
+        setCustomGearTypes(customGearTypes)
     }
-        , [])
 
     const postGearItem = async (formData: NewGearItemFormState): Promise<number | null> => {
         try {
@@ -123,7 +128,7 @@ function AddGear() {
         const custom = e.target.name === "customGearType"
         let updatedNewGearItemFormState = null;
 
-        if (custom){
+        if (custom) {
             updatedNewGearItemFormState = { ...newGearItemFormState, customGearTypeId: parseInt(selectedGearType), gearTypeId: null };
         } else {
             updatedNewGearItemFormState = { ...newGearItemFormState, gearTypeId: parseInt(selectedGearType), customGearTypeId: null };
@@ -172,7 +177,7 @@ function AddGear() {
             <h1>Add Gear</h1>
             <form onSubmit={handleSubmit}>
                 {gearTypeError && <>
-                    <div style={{color: "red"}}>Select 1 of gear type, custom gear type or add a new custom gear type.</div>
+                    <div style={{ color: "red" }}>Select 1 of gear type, custom gear type or add a new custom gear type.</div>
                 </>
                 }
                 <label htmlFor="gearType">Gear Type: </label>
