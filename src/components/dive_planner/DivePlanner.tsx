@@ -66,7 +66,7 @@ function DivePlanner() {
     }, [currentDives]);
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        let value = e.target.value;
+        const value = e.target.value;
         let intValue = parseInt(value) || 0;
         if (e.target.name === "depth" || e.target.name === "time") {
             intValue = Math.min(intValue, parseInt(e.target.max));

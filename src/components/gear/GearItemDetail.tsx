@@ -22,9 +22,11 @@ function GearItemDetail() {
                 );
                 setGearItemServiceInterval(gearItemServiceInterval);
             } catch (error) {
+                console.error("Error fetching gear item service interval:", error);
                 setGearItemServiceInterval(null);
             }
         } catch (error) {
+            console.error("Error fetching gear item:", error);
             setGearItem(null);
             setGearItemServiceInterval(null);
         } finally {

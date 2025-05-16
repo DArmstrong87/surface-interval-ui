@@ -17,6 +17,7 @@ import {
     TextField,
     Typography,
     Alert,
+    SelectChangeEvent,
 } from "@mui/material";
 import OctopusSpinner from "../../OctopusSpinner";
 import { loadingSpinnerTime } from "../Constants";
@@ -161,7 +162,7 @@ function AddGear() {
         setTrackService(isChecked);
     };
 
-    const handleGearTypeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const handleGearTypeChange = (e: SelectChangeEvent<number>) => {
         const selectedGearType = e.target.value;
         const custom = e.target.name === "customGearType";
         let updatedNewGearItemFormState = null;
@@ -169,13 +170,13 @@ function AddGear() {
         if (custom) {
             updatedNewGearItemFormState = {
                 ...newGearItemFormState,
-                customGearTypeId: parseInt(selectedGearType),
+                customGearTypeId: Number(selectedGearType),
                 gearTypeId: null,
             };
         } else {
             updatedNewGearItemFormState = {
                 ...newGearItemFormState,
-                gearTypeId: parseInt(selectedGearType),
+                gearTypeId: Number(selectedGearType),
                 customGearTypeId: null,
             };
         }
@@ -243,7 +244,7 @@ function AddGear() {
                             name="gearType"
                             value={newGearItemFormState.gearTypeId || ""}
                             label="Gear Type"
-                            onChange={handleGearTypeChange as any}
+                            onChange={handleGearTypeChange}
                         >
                             <MenuItem value="">Select Gear Type</MenuItem>
                             {gearTypes.map((gearType) => (
@@ -262,7 +263,7 @@ function AddGear() {
                                 name="customGearType"
                                 value={newGearItemFormState.customGearTypeId || ""}
                                 label="Custom Gear Type"
-                                onChange={handleGearTypeChange as any}
+                                onChange={handleGearTypeChange}
                             >
                                 <MenuItem value="">Select Custom Gear Type</MenuItem>
                                 {customGearTypes.map((customGearType) => (
