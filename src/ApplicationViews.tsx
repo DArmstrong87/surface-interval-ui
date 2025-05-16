@@ -12,23 +12,23 @@ import GearItemDetail from "./components/gear/GearItemDetail";
 import AddOrEditGearSet from "./components/gear/AddOrEditGearSet";
 
 export const ApplicationViews = () => {
-	return (
-		<>
-			<Routes>
-				<Route path="*" Component={Login} />
-				<Route element={<Authorized />}>
-					<Route path="/" Component={Home} />
-					<Route path="/dives" Component={Dives} />
-					<Route path="/dives/logDive" Component={LogDive} />
-					<Route path="/dive-planner" Component={DivePlanner} />
-					<Route path="/gear" Component={Gear} />
-					<Route path="/gear/:gearItemId" Component={GearItemDetail} />
-					<Route path="/gear/add" Component={AddGear} />
-					<Route path="/gear/add-gear-set" Component={AddOrEditGearSet} />
-					<Route path="/gear/gear-set/:gearSetId" Component={AddOrEditGearSet} />
-					<Route path="/profile" Component={Dives} />
-				</Route>
-			</Routes>
-		</>
-	);
+    return (
+        <>
+            <Routes>
+                <Route path="*" Component={Login} />
+                <Route element={<Authorized />}>
+                    <Route path="/" Component={Home} />
+                    <Route path="/dives" Component={Dives} />
+                    <Route path="/dives/logDive" Component={LogDive} />
+                    <Route path="/dive-planner" Component={DivePlanner} />
+                    <Route path="/gear" Component={Gear} />
+                    <Route path="/gear/:gearItemId" Component={GearItemDetail} />
+                    <Route path="/gear/add" Component={AddGear} />
+                    <Route path="/gear/add-gear-set" Component={AddOrEditGearSet} />
+                    <Route path="/gear/gear-set/:gearSetId" Component={AddOrEditGearSet} />
+                    <Route path="/profile" Component={Dives} />
+                </Route>
+            </Routes>
+        </>
+    );
 };
