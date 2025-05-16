@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import APIService from "../../api/APIService";
-import { GearSet } from "../../interfaces";
+import { GearSet, Dive } from "../../interfaces";
 
 interface LogDiveFormState {
 	date: string;
@@ -40,7 +40,7 @@ function LogDive() {
 
 	// Set gear sets to populate options
 	useEffect(() => {
-		APIService.fetchData("/gear-sets").then((gearSets) => setGearSets(gearSets));
+		APIService.fetchData<GearSet[]>("/gear-sets").then((gearSets) => setGearSets(gearSets));
 	}, []);
 
 	function listGearSetOptions(gearSets: GearSet[]) {
@@ -80,14 +80,16 @@ function LogDive() {
 		});
 	};
 
-	const handleLogDiveSubmit = (e: React.FormEvent) => {
-		APIService.sendData("dives", formState)
-			.then((res) => res.json())
-			.then((data) => {
-				if (data.status === 201) {
-					debugger;
+	const handleLogDiveSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+		e.preventDefault();
+		APIService.sendData<Dive>("dives", formState)
+			.then((dive) => {
+				if (dive.id) {
 					navigate("../dives");
 				}
+			})
+			.catch((error) => {
+				console.error("Error logging dive:", error);
 			});
 	};
 

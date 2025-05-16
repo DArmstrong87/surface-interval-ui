@@ -19,8 +19,8 @@ function GearItemDetail() {
 	const fetchGearItemAndServiceInterval = async () => {
 		try {
 			const [gearItem, gearItemServiceInterval] = await Promise.all([
-				APIService.fetchData(`/gear-items/${gearItemId}`),
-				APIService.fetchData(`/gear-item-service-intervals/${gearItemId}`),
+				APIService.fetchData<GearItem>(`/gear-items/${gearItemId}`),
+				APIService.fetchData<GearItemServiceInterval>(`/gear-item-service-intervals/${gearItemId}`),
 			]);
 			setGearItem(gearItem);
 			setGearItemServiceInterval(gearItemServiceInterval);

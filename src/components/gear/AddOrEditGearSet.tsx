@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import APIService from "../../api/APIService";
-import { GearType, CustomGearType, GearItem } from "../../interfaces";
+import { GearType, CustomGearType, GearItem, GearSet } from "../../interfaces";
 
 interface NewGearSetFormState {
 	name: string;
@@ -25,12 +25,14 @@ function AddOrEditGearSet() {
 	const [gearItems, setGearItems] = useState<GearItem[]>([]);
 
 	useEffect(() => {
-		APIService.fetchData("/gear-items").then((gearItems) => setGearItems(gearItems));
-		APIService.fetchData("/gear-types").then((gearTypes) => setGearTypes(gearTypes));
-		APIService.fetchData("/custom-gear-types").then((customGearTypes) => setCustomGearTypes(customGearTypes));
+		APIService.fetchData<GearItem[]>("/gear-items").then((gearItems) => setGearItems(gearItems));
+		APIService.fetchData<GearType[]>("/gear-types").then((gearTypes) => setGearTypes(gearTypes));
+		APIService.fetchData<CustomGearType[]>("/custom-gear-types").then((customGearTypes) =>
+			setCustomGearTypes(customGearTypes),
+		);
 		if (gearSetId) {
 			console.log(gearSetId);
-			APIService.fetchData(`/gear-sets/${gearSetId}`).then((gearSet) => {
+			APIService.fetchData<GearSet>(`/gear-sets/${gearSetId}`).then((gearSet) => {
 				const formData = {
 					name: gearSet.name,
 					weight: gearSet.weight,
@@ -39,7 +41,7 @@ function AddOrEditGearSet() {
 				setNewGearSetForm(formData);
 			});
 		}
-	}, []);
+	}, [gearSetId]);
 
 	const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
 		const { name, value } = event.target;
@@ -60,7 +62,7 @@ function AddOrEditGearSet() {
 		console.log(gearItemIds);
 	};
 
-	const handleSubmit = (event: React.FormEvent) => {
+	const handleSubmit = () => {
 		const gearSet = {
 			name: newGearSetForm.name,
 			weight: newGearSetForm.weight,

@@ -8,7 +8,7 @@ function Dives() {
 	const [dives, setDives] = useState<Dive[]>([]);
 
 	useEffect(() => {
-		APIService.fetchData("/dives").then((dives) => setDives(dives));
+		APIService.fetchData<Dive[]>("/dives").then((dives) => setDives(dives));
 	}, []);
 
 	function diveList(dives: Dive[]) {

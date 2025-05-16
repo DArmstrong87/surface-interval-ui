@@ -1,3 +1,4 @@
+import React from "react";
 import { Route, Routes } from "react-router-dom";
 import Dives from "./components/dives/Dives";
 import Gear from "./components/gear/Gear";

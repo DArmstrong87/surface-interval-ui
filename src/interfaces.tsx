@@ -1,7 +1,7 @@
 export interface Dive {
 	id: number;
 	date: string;
-	gear_set: any;
+	gear_set: GearSet;
 	location: string;
 	site: string;
 	water: string;

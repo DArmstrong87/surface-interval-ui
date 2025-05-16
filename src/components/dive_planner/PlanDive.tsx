@@ -116,8 +116,8 @@ const getOxygenPartialPressure = (depthIndex: number, air: string, depth: number
 	ppo = ppo !== undefined ? ppo : lastItem;
 
 	// 32 warning
-	let maximumDepth = air === EANx32 ? 110 : 90;
-	let warning = `❗ ppO2 exceeded. This dive is highly discouraged.
+	const maximumDepth = air === EANx32 ? 110 : 90;
+	const warning = `❗ ppO2 exceeded. This dive is highly discouraged.
     The maximum depth for ${air} is exceeded by ${depth - maximumDepth} feet which greatly increases the risk of oxygen toxicity, convulsions and drowning.
     Do not descend past the maximum depth of ${maximumDepth} feet.`;
 
@@ -194,7 +194,7 @@ const getSafetyStopAndNDL = (totalBottomTime: number, depthIndex: number, air: s
 	}
 
 	// Pre-Flight Surface Interval
-	let preFlightSI =
+	const preFlightSI =
 		roundUpToNDL || meetsNDL
 			? " 18 hours"
 			: exceedsNDL

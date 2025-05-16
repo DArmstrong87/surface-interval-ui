@@ -12,9 +12,9 @@ class APIService {
 	});
 
 	// Example GET request
-	public async fetchData(endpoint: string): Promise<any> {
+	public async fetchData<T>(endpoint: string): Promise<T> {
 		try {
-			const response: AxiosResponse = await this.axiosInstance.get(endpoint);
+			const response: AxiosResponse<T> = await this.axiosInstance.get(endpoint);
 			return response.data;
 		} catch (error: unknown) {
 			this.handleError(error as AxiosError);
@@ -23,9 +23,9 @@ class APIService {
 	}
 
 	// Example POST request
-	public async sendData(endpoint: string, data: any): Promise<any> {
+	public async sendData<T>(endpoint: string, data: object): Promise<T> {
 		try {
-			const response: AxiosResponse = await this.axiosInstance.post(endpoint, data);
+			const response: AxiosResponse<T> = await this.axiosInstance.post(endpoint, data);
 			return response.data;
 		} catch (error: unknown) {
 			this.handleError(error as AxiosError);
@@ -47,9 +47,9 @@ class APIService {
 		}
 	}
 
-	public async deleteData(endpoint: string): Promise<any> {
+	public async deleteData<T>(endpoint: string): Promise<T> {
 		try {
-			const response: AxiosResponse = await this.axiosInstance.delete(endpoint);
+			const response: AxiosResponse<T> = await this.axiosInstance.delete(endpoint);
 			return response.data;
 		} catch (error: unknown) {
 			this.handleError(error as AxiosError);
@@ -57,9 +57,9 @@ class APIService {
 		}
 	}
 
-	public async updateData(endpoint: string, data: any): Promise<any> {
+	public async updateData<T>(endpoint: string, data: object): Promise<T> {
 		try {
-			const response: AxiosResponse = await this.axiosInstance.put(endpoint, data);
+			const response: AxiosResponse<T> = await this.axiosInstance.put(endpoint, data);
 			return response.data;
 		} catch (error: unknown) {
 			this.handleError(error as AxiosError);

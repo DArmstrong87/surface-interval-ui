@@ -22,10 +22,10 @@ function Login() {
 		password: "123",
 	};
 
-	const handleSubmit = (e: any) => {
+	const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
 		setSubmitHidden(true);
-		let axiosInstance = axios.create({
+		const axiosInstance = axios.create({
 			baseURL: baseURL,
 			timeout: 10000,
 			headers: {

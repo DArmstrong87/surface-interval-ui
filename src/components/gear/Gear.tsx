@@ -11,8 +11,8 @@ function Gear() {
 	useEffect(() => {
 		const fetchData = async () => {
 			const [gearSets, gearItems] = await Promise.all([
-				APIService.fetchData("/gear-sets"),
-				APIService.fetchData("/gear-items"),
+				APIService.fetchData<GearSet[]>("/gear-sets"),
+				APIService.fetchData<GearItem[]>("/gear-items"),
 			]);
 			setGearSets(gearSets);
 			setGearItems(gearItems);

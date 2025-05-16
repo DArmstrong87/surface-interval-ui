@@ -48,7 +48,7 @@ function DivePlanner() {
 	}, [currentDives]);
 
 	const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-		let intValue = parseInt(e.target.value) || 0;
+		const intValue = parseInt(e.target.value) || 0;
 
 		// Set form state
 		setFormState({
@@ -82,7 +82,7 @@ function DivePlanner() {
 		setPrevDivePG(plannedDive.postDivePressureGroup);
 
 		// Reset form state, but persist air selection for subsequent dives
-		let resetFormState = { ...initialDiveFormState };
+		const resetFormState = { ...initialDiveFormState };
 		resetFormState["air"] = diveFormState.air;
 		if (["Y", "Z"].includes(plannedDive.postDivePressureGroup)) {
 			resetFormState["surfaceInterval"] = 180;

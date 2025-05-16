@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import APIService from "../../api/APIService";
-import { GearType, CustomGearType, GearItemService } from "../../interfaces";
+import { GearType, CustomGearType, GearItemService, GearItem } from "../../interfaces";
 
 interface NewGearItemFormState {
 	gearTypeId: number | null;
@@ -39,8 +39,8 @@ function AddGear() {
 
 	const fetchData = async () => {
 		const [gearTypes, customGearTypes] = await Promise.all([
-			APIService.fetchData("/gear-types"),
-			APIService.fetchData("/custom-gear-types"),
+			APIService.fetchData<GearType[]>("/gear-types"),
+			APIService.fetchData<CustomGearType[]>("/custom-gear-types"),
 		]);
 		setGearTypes(gearTypes);
 		setCustomGearTypes(customGearTypes);
@@ -48,7 +48,7 @@ function AddGear() {
 
 	const postGearItem = async (formData: NewGearItemFormState): Promise<number | null> => {
 		try {
-			const createdGearItem = await APIService.sendData("/gear-items", formData);
+			const createdGearItem = await APIService.sendData<GearItem>("/gear-items", formData);
 			return createdGearItem.id;
 		} catch (error) {
 			console.error("Error creating gear item:", error);
@@ -81,7 +81,6 @@ function AddGear() {
 		event.preventDefault();
 
 		const formIsValid = validateFormData(newGearItemFormState);
-		debugger;
 		if (!formIsValid) {
 			return;
 		}
