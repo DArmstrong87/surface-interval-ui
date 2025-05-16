@@ -1,7 +1,6 @@
-import logo from './logo.svg';
-import './App.css';
-import { Button } from '@mui/material';
-
+import logo from "./logo.svg";
+import "./App.css";
+import { Button } from "@mui/material";
 
 function Home() {
     return (
@@ -11,19 +10,12 @@ function Home() {
                 <p>
                     Edit <code>src/App.tsx</code> and save to reload.
                 </p>
-                <a
-                    className="App-link"
-                    href="https://reactjs.org"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                >
+                <a className="App-link" href="https://reactjs.org" target="_blank" rel="noopener noreferrer">
                     Learn React
                 </a>
             </header>
             <div>
-                <Button>
-                    HELLO
-                </Button>
+                <Button>HELLO</Button>
             </div>
         </div>
     );

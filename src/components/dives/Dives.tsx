@@ -1,37 +1,18 @@
-import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import APIService from '../../api/APIService';
-
-interface Dive {
-    id: number;
-    date: string;
-    gear_set: any;
-    location: string;
-    site: string;
-    water: string;
-    depth: number;
-    time: number;
-    description: string;
-    start_pressure: number;
-    end_pressure: number;
-    tank_vol: number;
-    air_consumption: number;
-    favorite: boolean;
-    dive_number: number;
-}
+import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import APIService from "../../api/APIService";
+import { Dive } from "../../interfaces";
 
 function Dives() {
-
     const navigate = useNavigate();
-    const [dives, setDives] = useState<Dive[]>([])
+    const [dives, setDives] = useState<Dive[]>([]);
 
     useEffect(() => {
-        APIService.fetchData("/dives")
-            .then(dives => setDives(dives))
-    }, [])
+        APIService.fetchData<Dive[]>("/dives").then((dives) => setDives(dives));
+    }, []);
 
     function diveList(dives: Dive[]) {
-        return dives.map((dive, index) =>
+        return dives.map((dive, index) => (
             <tr key={index}>
                 <td key={`${index}-num`}>{dive.dive_number}</td>
                 <td key={`${index}-date`}>{dive.date}</td>
@@ -41,36 +22,35 @@ function Dives() {
                 <td key={`${index}-depth`}>{dive.depth}</td>
                 <td key={`${index}-time`}>{dive.time}</td>
             </tr>
-        )
+        ));
     }
 
-    return (<>
-        <h1>Dive Log</h1>
+    return (
+        <>
+            <h1>Dive Log</h1>
 
-        <button onClick={() => navigate('logDive')}>Log Dive</button>
+            <button onClick={() => navigate("logDive")}>Log Dive</button>
 
-        <table>
-            <thead>
-                <tr>
-                    <th>
-                        Dive Log
-                    </th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>Number</td>
-                    <td>Date</td>
-                    <td>Location</td>
-                    <td>Site</td>
-                    <td>Water</td>
-                    <td>Depth</td>
-                    <td>Time</td>
-                </tr>
-                {diveList(dives)}
-            </tbody>
-        </table>
-    </>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Dive Log</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Number</td>
+                        <td>Date</td>
+                        <td>Location</td>
+                        <td>Site</td>
+                        <td>Water</td>
+                        <td>Depth</td>
+                        <td>Time</td>
+                    </tr>
+                    {diveList(dives)}
+                </tbody>
+            </table>
+        </>
     );
 }
 

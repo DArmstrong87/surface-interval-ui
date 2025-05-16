@@ -1,5 +1,4 @@
-import axios, { AxiosResponse, AxiosError } from 'axios';
-
+import axios, { AxiosResponse, AxiosError } from "axios";
 
 const BASE_URL = "http://127.0.0.1:8000/";
 
@@ -9,15 +8,15 @@ class APIService {
         baseURL: BASE_URL,
         timeout: 10000, // Example timeout
         headers: {
-            'Content-Type': 'application/json',
-            "Authorization": `Token ${localStorage.getItem("si_token")}`
+            "Content-Type": "application/json",
+            Authorization: `Token ${localStorage.getItem("si_token")}`,
         },
     });
 
-    // Example GET request
-    public async fetchData(endpoint: string): Promise<any> {
+    // GET request
+    public async fetchData<T>(endpoint: string): Promise<T> {
         try {
-            const response: AxiosResponse = await this.axiosInstance.get(endpoint);
+            const response: AxiosResponse<T> = await this.axiosInstance.get(endpoint);
             return response.data;
         } catch (error: unknown) {
             this.handleError(error as AxiosError);
@@ -25,10 +24,10 @@ class APIService {
         }
     }
 
-    // Example POST request
-    public async sendData(endpoint: string, data: any): Promise<any> {
+    // POST request
+    public async sendData<T>(endpoint: string, data: object): Promise<T> {
         try {
-            const response: AxiosResponse = await this.axiosInstance.post(endpoint, data);
+            const response: AxiosResponse<T> = await this.axiosInstance.post(endpoint, data);
             return response.data;
         } catch (error: unknown) {
             this.handleError(error as AxiosError);
@@ -36,17 +35,39 @@ class APIService {
         }
     }
 
-    // Handle errors (you can customize this based on your needs)
+    // Handle errors
     private handleError(error: AxiosError) {
         if (error.response) {
             // The request was made, but the server responded with a status code that falls out of the range of 2xx
-            console.error('Response Error:', error.response.data);
+            console.error("Response Error:", error.response.data);
         } else if (error.request) {
             // The request was made but no response was received
-            console.error('Request Error:', error.request);
+            console.error("Request Error:", error.request);
         } else {
             // Something happened in setting up the request that triggered an error
-            console.error('Error:', error.message);
+            console.error("Error:", error.message);
+        }
+    }
+
+    // DELETE request
+    public async deleteData<T>(endpoint: string): Promise<T> {
+        try {
+            const response: AxiosResponse<T> = await this.axiosInstance.delete(endpoint);
+            return response.data;
+        } catch (error: unknown) {
+            this.handleError(error as AxiosError);
+            throw error;
+        }
+    }
+
+    // PUT request
+    public async updateData<T>(endpoint: string, data: object): Promise<T> {
+        try {
+            const response: AxiosResponse<T> = await this.axiosInstance.put(endpoint, data);
+            return response.data;
+        } catch (error: unknown) {
+            this.handleError(error as AxiosError);
+            throw error;
         }
     }
 }
