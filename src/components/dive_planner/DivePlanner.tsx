@@ -137,7 +137,7 @@ function DivePlanner() {
                     justifyContent: "center",
                 }}
             >
-                <OctopusSpinner size={96} />
+                <OctopusSpinner />
             </Box>
         );
     }
@@ -242,7 +242,7 @@ function DivePlanner() {
                                 name="surfaceInterval"
                                 type="number"
                                 inputProps={{ min: prevDivePG === "Y" || prevDivePG === "Z" ? 180 : 0 }}
-                                value={diveFormState.surfaceInterval || 0}
+                                value={diveFormState.surfaceInterval.toString().replace(/^0+(?=\d)/, "") || 0}
                                 required
                                 onChange={handleInputChange}
                                 fullWidth

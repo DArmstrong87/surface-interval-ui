@@ -47,6 +47,8 @@ export interface GearItem {
     } | null;
     name: string;
     service_tracking: boolean;
+    service_interval: GearItemServiceInterval | null;
+    service_history: GearItemServiceHistory[];
     dives_since_last_service: number;
     days_since_last_service: number;
     due_for_service_days: number;
@@ -67,10 +69,25 @@ export interface GearItemService {
     dayInterval: number;
 }
 
+export interface GearItemServiceHistory {
+    id: number;
+    gear_item: GearItem;
+    service_date: string;
+}
+
 export interface GearItemServiceInterval {
     id: number;
     gear_item: GearItem;
     purchase_date: string;
     dive_interval: number;
     day_interval: number;
+}
+
+export interface NewGearItemServiceInterval {
+    id: number;
+    gearItemId: number;
+    purchaseDate: string;
+    lastServiceDate: string | null;
+    diveInterval: number;
+    dayInterval: number;
 }

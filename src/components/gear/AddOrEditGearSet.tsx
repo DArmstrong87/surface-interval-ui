@@ -67,7 +67,7 @@ function AddOrEditGearSet() {
                     justifyContent: "center",
                 }}
             >
-                <OctopusSpinner size={96} />
+                <OctopusSpinner />
             </Box>
         );
     }

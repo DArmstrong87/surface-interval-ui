@@ -1,7 +1,8 @@
 import React from "react";
 import octopus_loading from "./images/octo_loading.png";
+import { loadingSpinnerSize } from "./components/Constants";
 
-const OctopusSpinner: React.FC<{ size?: number }> = ({ size = 64 }) => (
+const OctopusSpinner: React.FC<{ size?: number }> = ({ size = loadingSpinnerSize }) => (
     <div
         style={{
             display: "inline-block",

@@ -77,7 +77,7 @@ function LogDive() {
                     justifyContent: "center",
                 }}
             >
-                <OctopusSpinner size={96} />
+                <OctopusSpinner />
             </Box>
         );
     }

@@ -30,13 +30,7 @@
     "eject": "react-scripts eject",
     "format": "prettier --write \"**/*.{ts,tsx}\"",
     "format:check": "prettier --check \"**/*.{ts,tsx}\"",
-    "lint": "eslint src/**/*.{ts,tsx}"
-  },
-  "eslintConfig": {
-    "extends": [
-      "react-app",
-      "react-app/jest"
-    ]
+    "lint": "eslint src"
   },
   "browserslist": {
     "production": [
@@ -53,9 +47,11 @@
   "devDependencies": {
     "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
     "@eslint/js": "^9.26.0",
+    "autoprefixer": "^10.4.21",
     "eslint": "^8.57.1",
     "eslint-plugin-react": "^7.37.5",
     "globals": "^16.1.0",
+    "postcss-preset-env": "^10.1.6",
     "prettier": "^3.5.3",
     "typescript-eslint": "^8.32.1"
   }
