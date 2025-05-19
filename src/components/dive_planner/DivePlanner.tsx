@@ -200,11 +200,6 @@ function DivePlanner() {
                 <Box component="form" sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
                     {currentDives.length > 0 && (
                         <>
-                            {(prevDivePG === "Y" || prevDivePG === "Z") && (
-                                <Typography color="warning.main" fontWeight={600}>
-                                    Previous dive's pressure group is "{prevDivePG}". The minimum suggested surface interval is 3 hours (180 minutes)
-                                </Typography>
-                            )}
                             <TextField
                                 label="Surface Interval (mins)"
                                 name="surfaceInterval"

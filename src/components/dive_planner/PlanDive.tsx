@@ -26,6 +26,7 @@ export const planDive = (data: DiveFormState, previousDive: DivePlan | null) => 
         Use depthIndex and time to get timeIndex
         Convert timeIndex to letter which is the pressure group
     */
+
     const depth = data.depth;
     const air = data.air;
     const actualBottomTime = data.time;
@@ -140,7 +141,7 @@ const getResidualNitrogenTime = (depth: number, pgIndex: number, air: string) =>
     // Use depth to get [residual nitrogen time, no deco limit] from matrix
     const depthIndex = getDepthIndex(depth, air);
     const RNT_NDL_MATRIX = air === AIR ? AIR_RNT_NDL_MATRIX : air === EANx32 ? EANx32_RNT_NDL_MATRIX : EANx36_RNT_NDL_MATRIX;
-    const times = RNT_NDL_MATRIX[depthIndex];
+    const times = RNT_NDL_MATRIX[depthIndex] || RNT_NDL_MATRIX[RNT_NDL_MATRIX.length - 1];
     return times[pgIndex];
 };
 
@@ -166,7 +167,7 @@ const getSafetyStopAndNDL = (totalBottomTime: number, depthIndex: number, air: s
     const exceedsNDL = totalBottomTime > decoLimitTime;
 
     // Length of safety stop depends on minutes exceeding NDL
-    // debugger
+
     const safetyStopLength = underDecoLimit ? 3 : minToAbsNDL >= 0 && minToAbsNDL <= 5 ? 8 : 15;
 
     // Warning message depends on scenario
