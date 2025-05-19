@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Box, Modal, Typography, TextField, Button } from "@mui/material";
-import APIService from "../../api/APIService";
-import { todaysDate } from "../../utils/timezone";
+import APIService from "../../../api/APIService";
+import { todaysDate } from "../../../utils/timezone";
 
 interface AddServiceDateFormModalProps {
     isOpen: boolean;

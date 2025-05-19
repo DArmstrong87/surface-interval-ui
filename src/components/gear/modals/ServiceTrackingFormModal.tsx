@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import { Box, Modal, Typography, TextField, Button } from "@mui/material";
-import { NewGearItemServiceInterval } from "../../interfaces";
-import APIService from "../../api/APIService";
-import { todaysDate } from "../../utils/timezone";
+import { NewGearItemServiceInterval } from "../../../interfaces";
+import APIService from "../../../api/APIService";
+import { todaysDate } from "../../../utils/timezone";
 
 interface ServiceTrackingFormModalProps {
     isOpen: boolean;

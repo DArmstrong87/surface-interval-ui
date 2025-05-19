@@ -3,7 +3,7 @@ import { Button, Typography } from "@mui/material";
 import { Box } from "@mui/material";
 
 import { Modal } from "@mui/material";
-import APIService from "../../api/APIService";
+import APIService from "../../../api/APIService";
 
 interface DeleteServiceDateModalProps {
     isOpen: boolean;

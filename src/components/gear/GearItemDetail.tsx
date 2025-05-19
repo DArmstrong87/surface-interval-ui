@@ -5,12 +5,12 @@ import { useParams, useNavigate } from "react-router-dom";
 import { Box, Paper, Typography, Button, Divider, Alert, List, ListItem, IconButton } from "@mui/material";
 import OctopusSpinner from "../../OctopusSpinner";
 import DeleteIcon from "@mui/icons-material/Delete";
-import ServiceTrackingFormModal from "./ServiceTrackingFormModal";
-import AddServiceDateFormModal from "./AddServiceDateFormModal";
-import DeleteServiceDateModal from "./DeleteServiceDateModal";
-import RemoveServiceTrackingModal from "./RemoveServiceTrackingModal";
+import ServiceTrackingFormModal from "./modals/ServiceTrackingFormModal";
+import AddServiceDateFormModal from "./modals/AddServiceDateFormModal";
+import DeleteServiceDateModal from "./modals/DeleteServiceDateModal";
+import RemoveServiceTrackingModal from "./modals/RemoveServiceTrackingModal";
 import { getUserTimezone } from "../../utils/timezone";
-import DeleteGearItemModal from "./DeleteGearItemModal";
+import DeleteGearItemModal from "./modals/DeleteGearItemModal";
 
 function GearItemDetail() {
     const navigate = useNavigate();

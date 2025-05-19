@@ -1,5 +1,5 @@
 import { Box, Button, Modal, Typography } from "@mui/material";
-import APIService from "../../api/APIService";
+import APIService from "../../../api/APIService";
 
 interface DeleteGearItemModalProps {
     isOpen: boolean;

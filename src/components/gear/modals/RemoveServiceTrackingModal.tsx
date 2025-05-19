@@ -3,8 +3,8 @@ import { Button, Typography } from "@mui/material";
 import { Box } from "@mui/material";
 
 import { Modal } from "@mui/material";
-import APIService from "../../api/APIService";
-import { GearItem } from "../../interfaces";
+import APIService from "../../../api/APIService";
+import { GearItem } from "../../../interfaces";
 
 interface RemoveServiceTrackingModalProps {
     isOpen: boolean;
