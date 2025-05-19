@@ -26,9 +26,7 @@ export default function ButtonAppBar() {
             <Box sx={{ flexGrow: 1 }}>
                 <AppBar position="static">
                     <Toolbar>
-                        <Box
-                            sx={{ display: "flex", justifyContent: "center", alignItems: "center", maxWidth: "100px" }}
-                        >
+                        <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", maxWidth: "100px" }}>
                             <img
                                 src={dive_flag}
                                 alt="logo"

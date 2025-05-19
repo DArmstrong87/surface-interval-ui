@@ -139,19 +139,13 @@ const getPgAfterSurfaceInterval = (startGroupIndex: number, surfaceIntervalTime:
 const getResidualNitrogenTime = (depth: number, pgIndex: number, air: string) => {
     // Use depth to get [residual nitrogen time, no deco limit] from matrix
     const depthIndex = getDepthIndex(depth, air);
-    const RNT_NDL_MATRIX =
-        air === AIR ? AIR_RNT_NDL_MATRIX : air === EANx32 ? EANx32_RNT_NDL_MATRIX : EANx36_RNT_NDL_MATRIX;
+    const RNT_NDL_MATRIX = air === AIR ? AIR_RNT_NDL_MATRIX : air === EANx32 ? EANx32_RNT_NDL_MATRIX : EANx36_RNT_NDL_MATRIX;
     const times = RNT_NDL_MATRIX[depthIndex];
     return times[pgIndex];
 };
 
 const getSafetyStopAndNDL = (totalBottomTime: number, depthIndex: number, air: string) => {
-    const SAFETY_STOP_DECO_LIMITS =
-        air === AIR
-            ? AIR_SAFETY_STOP_DECO_LIMITS
-            : air === EANx32
-              ? EANx32_SAFETY_STOP_DECO_LIMITS
-              : EANx36_SAFETY_STOP_DECO_LIMITS;
+    const SAFETY_STOP_DECO_LIMITS = air === AIR ? AIR_SAFETY_STOP_DECO_LIMITS : air === EANx32 ? EANx32_SAFETY_STOP_DECO_LIMITS : EANx36_SAFETY_STOP_DECO_LIMITS;
 
     // Safety Stop, Deco Limit
     const minSafetyStopTime_decoLimit = SAFETY_STOP_DECO_LIMITS[depthIndex];
@@ -195,11 +189,7 @@ const getSafetyStopAndNDL = (totalBottomTime: number, depthIndex: number, air: s
 
     // Pre-Flight Surface Interval
     const preFlightSI =
-        roundUpToNDL || meetsNDL
-            ? " 18 hours"
-            : exceedsNDL
-              ? " 24 hours"
-              : " 12 hours. If this dive follows multi-day dives, the minimum pre-flight surface interval is 18 hours.";
+        roundUpToNDL || meetsNDL ? " 18 hours" : exceedsNDL ? " 24 hours" : " 12 hours. If this dive follows multi-day dives, the minimum pre-flight surface interval is 18 hours.";
 
     const safetyStop = {
         required: safetyStopRequired,

@@ -2,12 +2,14 @@ import React, { useState, useEffect, useCallback } from "react";
 import APIService from "../../api/APIService";
 import { GearItem } from "../../interfaces";
 import { useParams, useNavigate } from "react-router-dom";
-import { Box, Paper, Typography, Button, Divider, Alert, Modal, List, ListItem, IconButton } from "@mui/material";
+import { Box, Paper, Typography, Button, Divider, Alert, List, ListItem, IconButton } from "@mui/material";
 import OctopusSpinner from "../../OctopusSpinner";
 import DeleteIcon from "@mui/icons-material/Delete";
 import ServiceTrackingFormModal from "./ServiceTrackingFormModal";
 import AddServiceDateFormModal from "./AddServiceDateFormModal";
 import DeleteServiceDateModal from "./DeleteServiceDateModal";
+import RemoveServiceTrackingModal from "./RemoveServiceTrackingModal";
+import { getUserTimezone } from "../../utils/timezone";
 
 function GearItemDetail() {
     const navigate = useNavigate();
@@ -22,7 +24,8 @@ function GearItemDetail() {
 
     const fetchGearItemAndServiceInterval = useCallback(async () => {
         try {
-            const gearItem = await APIService.fetchData<GearItem>(`/gear-items/${gearItemId}`);
+            const timezone = getUserTimezone();
+            const gearItem = await APIService.fetchData<GearItem>(`/gear-items/${gearItemId}?timezone=${timezone}`);
             setGearItem(gearItem);
         } catch (error) {
             console.error("Error fetching gear item:", error);
@@ -30,6 +33,7 @@ function GearItemDetail() {
         } finally {
             setIsLoading(false);
         }
+        setIsLoading(false);
     }, [gearItemId]);
 
     useEffect(() => {
@@ -47,23 +51,6 @@ function GearItemDetail() {
         }
     };
 
-    if (isLoading) {
-        return (
-            <Box
-                sx={{
-                    width: "100vw",
-                    height: "100vh",
-                    bgcolor: "white",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                }}
-            >
-                <OctopusSpinner />
-            </Box>
-        );
-    }
-
     const openAddServiceTrackingModal = () => {
         setShowAddServiceTrackingModal(true);
     };
@@ -71,28 +58,6 @@ function GearItemDetail() {
     const closeAddServiceTrackingModal = () => {
         setShowAddServiceTrackingModal(false);
     };
-
-    const removeServiceTracking = () => {
-        console.log("Removing service tracking:", gearItem?.service_interval?.id);
-        APIService.deleteData(`/gear-item-service-intervals/${gearItem?.service_interval?.id}`)
-            .then(() => {
-                fetchGearItemAndServiceInterval();
-            })
-            .catch((error) => {
-                console.warn("Error removing service tracking:", error);
-            })
-            .finally(() => {
-                closeRemoveServiceTrackingModal();
-            });
-    };
-
-    if (!gearItem) {
-        return (
-            <Box sx={{ mt: 8, display: "flex", justifyContent: "center" }}>
-                <Alert severity="error">No gear item found.</Alert>
-            </Box>
-        );
-    }
 
     const openAddServiceDateModal = () => {
         setShowAddServiceDateModal(true);
@@ -112,38 +77,6 @@ function GearItemDetail() {
         setServiceDateIdToDelete(null);
     };
 
-    const removeServiceTrackingModal = () => {
-        return (
-            <Modal open={showRemoveServiceTrackingModal} onClose={closeRemoveServiceTrackingModal}>
-                <Box
-                    sx={{
-                        position: "absolute",
-                        top: "50%",
-                        left: "50%",
-                        transform: "translate(-50%, -50%)",
-                        bgcolor: "white",
-                        p: 4,
-                        maxWidth: 500,
-                        width: "100%",
-                        borderRadius: "10px",
-                    }}
-                >
-                    <Typography variant="h6" align="center">
-                        Remove Service Tracking for this item?
-                    </Typography>
-                    <Box sx={{ display: "flex", justifyContent: "space-between", mt: 2 }}>
-                        <Button variant="contained" color="primary" onClick={removeServiceTracking}>
-                            Remove
-                        </Button>
-                        <Button variant="outlined" color="info" onClick={closeRemoveServiceTrackingModal}>
-                            Cancel
-                        </Button>
-                    </Box>
-                </Box>
-            </Modal>
-        );
-    };
-
     const openRemoveServiceTrackingModal = () => {
         setShowRemoveServiceTrackingModal(true);
     };
@@ -151,6 +84,31 @@ function GearItemDetail() {
     const closeRemoveServiceTrackingModal = () => {
         setShowRemoveServiceTrackingModal(false);
     };
+
+    if (isLoading) {
+        return (
+            <Box
+                sx={{
+                    width: "100vw",
+                    height: "100vh",
+                    bgcolor: "white",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                }}
+            >
+                <OctopusSpinner />
+            </Box>
+        );
+    }
+
+    if (!gearItem) {
+        return (
+            <Box sx={{ mt: 8, display: "flex", justifyContent: "center" }}>
+                <Alert severity="error">No gear item found.</Alert>
+            </Box>
+        );
+    }
 
     return (
         <>
@@ -173,7 +131,12 @@ function GearItemDetail() {
                 serviceDateIdToDelete={serviceDateIdToDelete}
                 onSuccess={fetchGearItemAndServiceInterval}
             />
-            {removeServiceTrackingModal()}
+            <RemoveServiceTrackingModal
+                isOpen={showRemoveServiceTrackingModal}
+                gearItem={gearItem}
+                onClose={closeRemoveServiceTrackingModal}
+                onSuccess={fetchGearItemAndServiceInterval}
+            />
             {/* END FORM MODALS */}
 
             {/* MAIN CONTENT */}
@@ -199,28 +162,16 @@ function GearItemDetail() {
                                 </Typography>
                                 {gearItem.service_interval ? (
                                     <>
-                                        <Typography>
-                                            Purchase Date: {gearItem.service_interval.purchase_date}
-                                        </Typography>
+                                        <Typography>Purchase Date: {gearItem.service_interval.purchase_date}</Typography>
                                         {gearItem.days_since_last_service > 0 ? (
-                                            <Typography color="error">
-                                                This item is overdue for service by {gearItem.days_since_last_service}{" "}
-                                                days
-                                            </Typography>
+                                            <Typography color="error">This item is overdue for service by {gearItem.days_since_last_service} days</Typography>
                                         ) : (
-                                            <Typography>
-                                                Days until next service: {Math.abs(gearItem.due_for_service_days)}
-                                            </Typography>
+                                            <Typography>Days until next service: {Math.abs(gearItem.due_for_service_days)}</Typography>
                                         )}
                                         {gearItem.dives_since_last_service > 0 ? (
-                                            <Typography color="error">
-                                                This item is overdue for service by {gearItem.dives_since_last_service}{" "}
-                                                dives
-                                            </Typography>
+                                            <Typography color="error">This item is overdue for service by {gearItem.dives_since_last_service} dives</Typography>
                                         ) : (
-                                            <Typography>
-                                                Dives until next service: {Math.abs(gearItem.due_for_service_dives)}
-                                            </Typography>
+                                            <Typography>Dives until next service: {Math.abs(gearItem.due_for_service_dives)}</Typography>
                                         )}
                                     </>
                                 ) : (
@@ -238,10 +189,8 @@ function GearItemDetail() {
                                         <ListItem
                                             key={`${gearItemId}__${serviceHistory.id}`}
                                             secondaryAction={
-                                                <IconButton edge="end" aria-label="delete">
-                                                    <DeleteIcon
-                                                        onClick={() => openDeleteServiceDateModal(serviceHistory.id)}
-                                                    />
+                                                <IconButton edge="end" aria-label="delete" onClick={() => openDeleteServiceDateModal(serviceHistory.id)}>
+                                                    <DeleteIcon />
                                                 </IconButton>
                                             }
                                         >

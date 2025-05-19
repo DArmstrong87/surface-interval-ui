@@ -1,19 +1,7 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { planDive } from "./PlanDive";
 import { AIR, EANx32, EANx36 } from "./DiveTables";
-import {
-    Box,
-    Button,
-    FormControl,
-    FormControlLabel,
-    FormLabel,
-    Paper,
-    Radio,
-    RadioGroup,
-    TextField,
-    Typography,
-    Divider,
-} from "@mui/material";
+import { Box, Button, FormControl, FormControlLabel, FormLabel, Paper, Radio, RadioGroup, TextField, Typography, Divider } from "@mui/material";
 import OctopusSpinner from "../../OctopusSpinner";
 import { loadingSpinnerTime } from "../Constants";
 
@@ -153,17 +141,13 @@ function DivePlanner() {
                         Plan the dive, dive the plan.
                     </Typography>
                     <Typography variant="body2" color="text.secondary" paragraph>
-                        This dive planner uses the PADI Recreational Dive Planner. It is designed for new Open Water
-                        students to practice their dive planning skills as well as anyone planning a single dive or
-                        multiple dives. The dive planner informs the diver if a planned dive is relatively safe
-                        regarding nitrogen exposure only.
+                        This dive planner uses the PADI Recreational Dive Planner. It is designed for new Open Water students to practice their dive planning skills as well as
+                        anyone planning a single dive or multiple dives. The dive planner informs the diver if a planned dive is relatively safe regarding nitrogen exposure only.
                     </Typography>
                     <Typography variant="body2" color="text.secondary" paragraph>
-                        Other factors can increase risk of developing decompression illness beyond depth, time and
-                        ascent rate, including dehydration, thermal stress, exertion, general fitness, post-dive air
-                        travel, etc. The dive planner can NOT predict diver behavior, dive conditions or in any way
-                        ensure dive safety prior to or during a dive. Remember to use a reliable dive computer and
-                        always dive within your limits.
+                        Other factors can increase risk of developing decompression illness beyond depth, time and ascent rate, including dehydration, thermal stress, exertion,
+                        general fitness, post-dive air travel, etc. The dive planner can NOT predict diver behavior, dive conditions or in any way ensure dive safety prior to or
+                        during a dive. Remember to use a reliable dive computer and always dive within your limits.
                     </Typography>
                 </Box>
                 {currentDives.length > 0 && (
@@ -175,35 +159,22 @@ function DivePlanner() {
                             <Paper key={`dive-${index}`} sx={{ p: 2, mb: 2, background: "#f5f5f5" }}>
                                 {index !== 0 && (
                                     <>
-                                        <Typography variant="body2">
-                                            Surface Interval: {dive.surfaceInterval} minutes
-                                        </Typography>
-                                        <Typography variant="body2">
-                                            Starting Pressure Group: {dive.startingPressureGroup}
-                                        </Typography>
+                                        <Typography variant="body2">Surface Interval: {dive.surfaceInterval} minutes</Typography>
+                                        <Typography variant="body2">Starting Pressure Group: {dive.startingPressureGroup}</Typography>
                                     </>
                                 )}
                                 <Typography variant="body2">Depth: {dive.depth}</Typography>
                                 {index !== 0 ? (
                                     <>
-                                        <Typography variant="body2">
-                                            Actual Bottom Time: {dive.actualBottomTime} minutes
-                                        </Typography>
-                                        <Typography variant="body2">
-                                            + Residual nitrogen time: {dive.residualNitrogenTime} minutes
-                                        </Typography>
-                                        <Typography variant="body2">
-                                            = Total bottom time: {dive.totalBottomTime} minutes
-                                        </Typography>
+                                        <Typography variant="body2">Actual Bottom Time: {dive.actualBottomTime} minutes</Typography>
+                                        <Typography variant="body2">+ Residual nitrogen time: {dive.residualNitrogenTime} minutes</Typography>
+                                        <Typography variant="body2">= Total bottom time: {dive.totalBottomTime} minutes</Typography>
                                     </>
                                 ) : (
                                     <Typography variant="body2">Total Bottom Time: {dive.totalBottomTime}</Typography>
                                 )}
                                 <Typography variant="body2">Pressure Group: {dive.postDivePressureGroup}</Typography>
-                                <Typography variant="body2">
-                                    Safety Stop Required:{" "}
-                                    {dive.safetyStop.required ? `${dive.safetyStop.length} minutes` : "No"}
-                                </Typography>
+                                <Typography variant="body2">Safety Stop Required: {dive.safetyStop.required ? `${dive.safetyStop.length} minutes` : "No"}</Typography>
                                 <Typography variant="body2">
                                     Pre-flight surface interval:{" "}
                                     {index === 0 && !dive.decoLimit.met
@@ -213,9 +184,7 @@ function DivePlanner() {
                                 {dive.ppo !== null && (
                                     <>
                                         <Typography variant="body2">ppO2: {dive.ppo.value}</Typography>
-                                        {dive.ppo.value > 1.4 && (
-                                            <Typography color="error">{dive.ppo.warning}</Typography>
-                                        )}
+                                        {dive.ppo.value > 1.4 && <Typography color="error">{dive.ppo.warning}</Typography>}
                                     </>
                                 )}
                                 {dive.decoLimit.met && (
@@ -233,8 +202,7 @@ function DivePlanner() {
                         <>
                             {(prevDivePG === "Y" || prevDivePG === "Z") && (
                                 <Typography color="warning.main" fontWeight={600}>
-                                    Previous dive's pressure group is "{prevDivePG}". The minimum suggested surface
-                                    interval is 3 hours (180 minutes)
+                                    Previous dive's pressure group is "{prevDivePG}". The minimum suggested surface interval is 3 hours (180 minutes)
                                 </Typography>
                             )}
                             <TextField
@@ -280,14 +248,7 @@ function DivePlanner() {
                         fullWidth
                     />
                     <Box sx={{ display: "flex", gap: 2, mt: 2 }}>
-                        <Button
-                            onClick={handleSubmit}
-                            id="diveBtn"
-                            variant="contained"
-                            color="primary"
-                            disabled={diveFormState.depth <= 0 || diveFormState.time <= 0}
-                            fullWidth
-                        >
+                        <Button onClick={handleSubmit} id="diveBtn" variant="contained" color="primary" disabled={diveFormState.depth <= 0 || diveFormState.time <= 0} fullWidth>
                             Dive
                         </Button>
                         <Button onClick={handleReset} id="resetBtn" variant="outlined" color="secondary" fullWidth>

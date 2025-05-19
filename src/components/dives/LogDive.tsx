@@ -130,39 +130,10 @@ function LogDive() {
                 <Typography variant="h4" component="h1" gutterBottom align="center">
                     Log Dive
                 </Typography>
-                <Box
-                    component="form"
-                    onSubmit={handleLogDiveSubmit}
-                    sx={{ display: "flex", flexDirection: "column", gap: 2 }}
-                >
-                    <TextField
-                        label="Date"
-                        name="date"
-                        type="date"
-                        value={formState.date}
-                        onChange={handleInputChange}
-                        InputLabelProps={{ shrink: true }}
-                        required
-                        fullWidth
-                    />
-                    <TextField
-                        label="Location"
-                        name="location"
-                        type="text"
-                        value={formState.location}
-                        onChange={handleInputChange}
-                        required
-                        fullWidth
-                    />
-                    <TextField
-                        label="Site"
-                        name="site"
-                        type="text"
-                        value={formState.site}
-                        onChange={handleInputChange}
-                        required
-                        fullWidth
-                    />
+                <Box component="form" onSubmit={handleLogDiveSubmit} sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
+                    <TextField label="Date" name="date" type="date" value={formState.date} onChange={handleInputChange} InputLabelProps={{ shrink: true }} required fullWidth />
+                    <TextField label="Location" name="location" type="text" value={formState.location} onChange={handleInputChange} required fullWidth />
+                    <TextField label="Site" name="site" type="text" value={formState.site} onChange={handleInputChange} required fullWidth />
                     <FormControl component="fieldset">
                         <FormLabel component="legend">Water</FormLabel>
                         <RadioGroup row name="water" value={formState.water} onChange={handleRadioChange}>
@@ -170,69 +141,17 @@ function LogDive() {
                             <FormControlLabel value="Salt" control={<Radio />} label="Salt" />
                         </RadioGroup>
                     </FormControl>
-                    <TextField
-                        label="Depth (ft)"
-                        name="depth"
-                        type="number"
-                        value={formState.depth}
-                        onChange={handleInputChange}
-                        required
-                        fullWidth
-                    />
-                    <TextField
-                        label="Time (mins)"
-                        name="time"
-                        type="number"
-                        value={formState.time}
-                        onChange={handleInputChange}
-                        required
-                        fullWidth
-                    />
-                    <TextField
-                        label="Description"
-                        name="description"
-                        value={formState.description}
-                        onChange={handleTextareaChange}
-                        multiline
-                        minRows={2}
-                        fullWidth
-                    />
+                    <TextField label="Depth (ft)" name="depth" type="number" value={formState.depth} onChange={handleInputChange} required fullWidth />
+                    <TextField label="Time (mins)" name="time" type="number" value={formState.time} onChange={handleInputChange} required fullWidth />
+                    <TextField label="Description" name="description" value={formState.description} onChange={handleTextareaChange} multiline minRows={2} fullWidth />
                     <Box sx={{ display: "flex", gap: 2 }}>
-                        <TextField
-                            label="Start Pressure"
-                            name="startPressure"
-                            type="number"
-                            value={formState.startPressure}
-                            onChange={handleInputChange}
-                            fullWidth
-                        />
-                        <TextField
-                            label="End Pressure"
-                            name="endPressure"
-                            type="number"
-                            value={formState.endPressure}
-                            onChange={handleInputChange}
-                            fullWidth
-                        />
+                        <TextField label="Start Pressure" name="startPressure" type="number" value={formState.startPressure} onChange={handleInputChange} fullWidth />
+                        <TextField label="End Pressure" name="endPressure" type="number" value={formState.endPressure} onChange={handleInputChange} fullWidth />
                     </Box>
-                    <TextField
-                        label="Tank Volume (cubic feet)"
-                        name="tankVol"
-                        type="number"
-                        value={formState.tankVol}
-                        onChange={handleInputChange}
-                        fullWidth
-                    />
+                    <TextField label="Tank Volume (cubic feet)" name="tankVol" type="number" value={formState.tankVol} onChange={handleInputChange} fullWidth />
                     <FormControl fullWidth>
                         <InputLabel id="gearSet-label">Gear Set Used</InputLabel>
-                        <Select
-                            labelId="gearSet-label"
-                            id="gearSetSelect"
-                            name="gearSet"
-                            value={formState.gearSet}
-                            label="Gear Set Used"
-                            onChange={handleSelectChange}
-                        >
+                        <Select labelId="gearSet-label" id="gearSetSelect" name="gearSet" value={formState.gearSet} label="Gear Set Used" onChange={handleSelectChange}>
                             <MenuItem value={0} disabled>
                                 Gear Set Used
                             </MenuItem>

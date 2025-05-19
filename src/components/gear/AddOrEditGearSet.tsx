@@ -146,16 +146,7 @@ function AddOrEditGearSet() {
                     }}
                     sx={{ display: "flex", flexDirection: "column", gap: 2 }}
                 >
-                    <TextField
-                        label="Gear Set Name"
-                        id="gearSetName"
-                        name="name"
-                        value={newGearSetForm.name}
-                        onChange={handleInputChange}
-                        required
-                        fullWidth
-                        sx={{ mb: 2 }}
-                    />
+                    <TextField label="Gear Set Name" id="gearSetName" name="name" value={newGearSetForm.name} onChange={handleInputChange} required fullWidth sx={{ mb: 2 }} />
                     <TextField
                         label="Weight"
                         id="gearSetWeight"
@@ -199,9 +190,7 @@ function AddOrEditGearSet() {
                                 ))}
                         {customGearTypes &&
                             customGearTypes
-                                .filter((customGearType) =>
-                                    gearItems.some((item) => item.custom_gear_type?.id === customGearType.id),
-                                )
+                                .filter((customGearType) => gearItems.some((item) => item.custom_gear_type?.id === customGearType.id))
                                 .map((customGearType) => (
                                     <Grid item xs={12} md={6} key={customGearType.id}>
                                         <Typography variant="subtitle1" sx={{ mb: 1, fontWeight: 600 }}>

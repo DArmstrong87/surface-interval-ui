@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Box, Modal, Typography, TextField, Button } from "@mui/material";
 import { NewGearItemServiceInterval } from "../../interfaces";
 import APIService from "../../api/APIService";
+import { todaysDate } from "../../utils/timezone";
 
 interface ServiceTrackingFormModalProps {
     isOpen: boolean;
@@ -10,27 +11,24 @@ interface ServiceTrackingFormModalProps {
     onSuccess: () => void;
 }
 
-const defaultNewServiceInterval: NewGearItemServiceInterval = {
-    id: 0,
-    gearItemId: 0,
-    purchaseDate: "",
-    lastServiceDate: null,
-    diveInterval: 0,
-    dayInterval: 0,
-};
-
-const ServiceTrackingFormModal: React.FC<ServiceTrackingFormModalProps> = ({
-    isOpen,
-    onClose,
-    gearItemId,
-    onSuccess,
-}) => {
+const ServiceTrackingFormModal: React.FC<ServiceTrackingFormModalProps> = ({ isOpen, onClose, gearItemId, onSuccess }) => {
+    const defaultNewServiceInterval: NewGearItemServiceInterval = {
+        id: 0,
+        gearItemId: parseInt(gearItemId),
+        purchaseDate: "",
+        lastServiceDate: null,
+        diveInterval: 0,
+        dayInterval: 0,
+    };
     const [newServiceInterval, setNewServiceInterval] = useState<NewGearItemServiceInterval>({
         ...defaultNewServiceInterval,
-        gearItemId: parseInt(gearItemId || "0"),
+        gearItemId: parseInt(gearItemId),
     });
     const [formErrors, setFormErrors] = useState({
         purchaseDate: false,
+        purchaseDateFuture: false,
+        lastServiceDate: false,
+        lastServiceDateFuture: false,
         diveInterval: false,
         dayInterval: false,
     });
@@ -38,6 +36,9 @@ const ServiceTrackingFormModal: React.FC<ServiceTrackingFormModalProps> = ({
     const validateForm = () => {
         const errors = {
             purchaseDate: !newServiceInterval.purchaseDate,
+            purchaseDateFuture: newServiceInterval.purchaseDate > todaysDate,
+            lastServiceDate: newServiceInterval.lastServiceDate && newServiceInterval.lastServiceDate > todaysDate ? true : false,
+            lastServiceDateFuture: newServiceInterval.lastServiceDate && newServiceInterval.lastServiceDate > todaysDate ? true : false,
             diveInterval: !newServiceInterval.diveInterval || newServiceInterval.diveInterval === 0,
             dayInterval: !newServiceInterval.dayInterval || newServiceInterval.dayInterval === 0,
         };
@@ -70,8 +71,11 @@ const ServiceTrackingFormModal: React.FC<ServiceTrackingFormModalProps> = ({
         setNewServiceInterval(defaultNewServiceInterval);
         setFormErrors({
             purchaseDate: false,
+            purchaseDateFuture: false,
             diveInterval: false,
             dayInterval: false,
+            lastServiceDate: false,
+            lastServiceDateFuture: false,
         });
         onClose();
     };
@@ -98,29 +102,35 @@ const ServiceTrackingFormModal: React.FC<ServiceTrackingFormModalProps> = ({
                     <TextField
                         label="Purchase Date"
                         type="date"
-                        value={newServiceInterval?.purchaseDate}
+                        value={newServiceInterval.purchaseDate}
                         onChange={(e) => setNewServiceInterval({ ...newServiceInterval, purchaseDate: e.target.value })}
                         InputLabelProps={{ shrink: true }}
+                        inputProps={{ max: todaysDate }}
                         required
-                        error={formErrors.purchaseDate}
-                        helperText={formErrors.purchaseDate ? "Purchase date is required" : ""}
+                        error={formErrors.purchaseDate || formErrors.purchaseDateFuture}
+                        helperText={formErrors.purchaseDate ? "Purchase date is required" : formErrors.purchaseDateFuture ? "Purchase date cannot be in the future" : ""}
                     />
                     <TextField
-                        label="Last Service Date"
+                        label="Last Service Date (optional)"
                         type="date"
-                        value={newServiceInterval?.lastServiceDate}
-                        onChange={(e) =>
-                            setNewServiceInterval({ ...newServiceInterval, lastServiceDate: e.target.value })
-                        }
+                        value={newServiceInterval.lastServiceDate || ""}
+                        onChange={(e) => setNewServiceInterval({ ...newServiceInterval, lastServiceDate: e.target.value || null })}
                         InputLabelProps={{ shrink: true }}
+                        inputProps={{ max: todaysDate }}
+                        error={formErrors.lastServiceDate || formErrors.lastServiceDateFuture}
+                        helperText={
+                            formErrors.lastServiceDate
+                                ? "Last service date cannot be in the future"
+                                : formErrors.lastServiceDateFuture
+                                  ? "Last service date cannot be in the future"
+                                  : ""
+                        }
                     />
                     <TextField
                         label="Dive Interval"
                         type="number"
-                        value={newServiceInterval?.diveInterval.toString().replace(/^0+(?=\d)/, "") || 0}
-                        onChange={(e) =>
-                            setNewServiceInterval({ ...newServiceInterval, diveInterval: parseInt(e.target.value) })
-                        }
+                        value={newServiceInterval.diveInterval.toString().replace(/^0+(?=\d)/, "") || 0}
+                        onChange={(e) => setNewServiceInterval({ ...newServiceInterval, diveInterval: parseInt(e.target.value) })}
                         required
                         error={formErrors.diveInterval}
                         inputProps={{ min: 1 }}
@@ -129,10 +139,8 @@ const ServiceTrackingFormModal: React.FC<ServiceTrackingFormModalProps> = ({
                     <TextField
                         label="Day Interval"
                         type="number"
-                        value={newServiceInterval?.dayInterval.toString().replace(/^0+(?=\d)/, "") || 0}
-                        onChange={(e) =>
-                            setNewServiceInterval({ ...newServiceInterval, dayInterval: parseInt(e.target.value) })
-                        }
+                        value={newServiceInterval.dayInterval.toString().replace(/^0+(?=\d)/, "") || 0}
+                        onChange={(e) => setNewServiceInterval({ ...newServiceInterval, dayInterval: parseInt(e.target.value) })}
                         required
                         error={formErrors.dayInterval}
                         inputProps={{ min: 1 }}

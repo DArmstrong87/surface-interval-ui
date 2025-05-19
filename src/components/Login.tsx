@@ -1,19 +1,5 @@
 import { useState } from "react";
-import {
-    TextField,
-    FormControlLabel,
-    Checkbox,
-    Link,
-    Grid,
-    Box,
-    Button,
-    Container,
-    ThemeProvider,
-    Typography,
-    createTheme,
-    CircularProgress,
-    Paper,
-} from "@mui/material";
+import { TextField, FormControlLabel, Checkbox, Link, Grid, Box, Button, Container, ThemeProvider, Typography, createTheme, CircularProgress, Paper } from "@mui/material";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { LoginForm } from "../interfaces";
@@ -96,20 +82,9 @@ function Login() {
                                 value={loginForm.password}
                                 onChange={handleInputChange}
                             />
-                            <FormControlLabel
-                                control={<Checkbox value="remember" color="primary" />}
-                                id="Remember me"
-                                name="Remember me"
-                                label="Remember me"
-                            />
+                            <FormControlLabel control={<Checkbox value="remember" color="primary" />} id="Remember me" name="Remember me" label="Remember me" />
                             {!submitHidden && (
-                                <Button
-                                    type="submit"
-                                    fullWidth
-                                    id="submitButton"
-                                    variant="contained"
-                                    sx={{ mt: 3, mb: 2 }}
-                                >
+                                <Button type="submit" fullWidth id="submitButton" variant="contained" sx={{ mt: 3, mb: 2 }}>
                                     Sign In
                                 </Button>
                             )}

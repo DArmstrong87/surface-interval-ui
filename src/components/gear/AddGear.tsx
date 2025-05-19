@@ -55,10 +55,7 @@ function AddGear() {
 
     useEffect(() => {
         const fetchData = async () => {
-            const [gearTypes, customGearTypes] = await Promise.all([
-                APIService.fetchData<GearType[]>("/gear-types"),
-                APIService.fetchData<CustomGearType[]>("/custom-gear-types"),
-            ]);
+            const [gearTypes, customGearTypes] = await Promise.all([APIService.fetchData<GearType[]>("/gear-types"), APIService.fetchData<CustomGearType[]>("/custom-gear-types")]);
             setGearTypes(gearTypes);
             setCustomGearTypes(customGearTypes);
             setTimeout(() => setLoading(false), loadingSpinnerTime);
@@ -141,11 +138,7 @@ function AddGear() {
     };
 
     const validateFormData = (newGearItemFormState: NewGearItemFormState): boolean => {
-        const gearTypes = [
-            newGearItemFormState.customGearTypeId,
-            newGearItemFormState.gearTypeId,
-            newGearItemFormState.newCustomGearType,
-        ];
+        const gearTypes = [newGearItemFormState.customGearTypeId, newGearItemFormState.gearTypeId, newGearItemFormState.newCustomGearType];
         const onlyOne =
             (gearTypes.filter((item) => item === null).length === 1 && newGearItemFormState.newCustomGearType === "") ||
             (gearTypes.filter((item) => item === null).length === 2 && newGearItemFormState.newCustomGearType !== "");
@@ -231,11 +224,7 @@ function AddGear() {
                     Add Gear
                 </Typography>
                 <Box component="form" onSubmit={handleSubmit} sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
-                    {gearTypeError && (
-                        <Alert severity="error">
-                            Select 1 of gear type, custom gear type or add a new custom gear type.
-                        </Alert>
-                    )}
+                    {gearTypeError && <Alert severity="error">Select 1 of gear type, custom gear type or add a new custom gear type.</Alert>}
                     <FormControl fullWidth>
                         <InputLabel id="gearType-label">Gear Type</InputLabel>
                         <Select
@@ -282,20 +271,9 @@ function AddGear() {
                         onChange={handleNewCustomGearTypeInput}
                         fullWidth
                     />
-                    <TextField
-                        label="Name"
-                        id="name"
-                        name="name"
-                        required
-                        value={newGearItemFormState.name}
-                        onChange={handleInput}
-                        fullWidth
-                    />
+                    <TextField label="Name" id="name" name="name" required value={newGearItemFormState.name} onChange={handleInput} fullWidth />
                     <FormGroup>
-                        <FormControlLabel
-                            control={<Checkbox checked={trackService} onChange={handleTrackServiceChange} />}
-                            label="Track Service"
-                        />
+                        <FormControlLabel control={<Checkbox checked={trackService} onChange={handleTrackServiceChange} />} label="Track Service" />
                     </FormGroup>
                     {trackService && (
                         <>
@@ -348,14 +326,7 @@ function AddGear() {
                             />
                         </>
                     )}
-                    <Button
-                        id="addGearBtn"
-                        type="submit"
-                        variant="contained"
-                        color="primary"
-                        size="large"
-                        sx={{ mt: 2 }}
-                    >
+                    <Button id="addGearBtn" type="submit" variant="contained" color="primary" size="large" sx={{ mt: 2 }}>
                         Add Gear
                     </Button>
                 </Box>

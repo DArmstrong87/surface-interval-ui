@@ -4,27 +4,24 @@ import { Box } from "@mui/material";
 
 import { Modal } from "@mui/material";
 import APIService from "../../api/APIService";
+import { GearItem } from "../../interfaces";
 
-interface DeleteServiceDateModalProps {
+interface RemoveServiceTrackingModalProps {
     isOpen: boolean;
+    gearItem: GearItem;
     onClose: () => void;
-    serviceDateIdToDelete: number | null;
     onSuccess: () => void;
 }
 
-const DeleteServiceDateModal: React.FC<DeleteServiceDateModalProps> = ({ isOpen, onClose, serviceDateIdToDelete, onSuccess }) => {
-    const deleteServiceDate = (serviceDateIdToDelete: number | null) => {
-        if (!serviceDateIdToDelete) {
-            console.error("No service date ID to delete");
-            return;
-        }
-        console.log("Deleting service date:", serviceDateIdToDelete);
-        APIService.deleteData(`/gear-item-services/${serviceDateIdToDelete}`)
+const RemoveServiceTrackingModal: React.FC<RemoveServiceTrackingModalProps> = ({ isOpen, gearItem, onClose, onSuccess }) => {
+    const removeServiceTracking = () => {
+        console.log("Removing service tracking:", gearItem?.service_interval?.id);
+        APIService.deleteData(`/gear-item-service-intervals/${gearItem?.service_interval?.id}`)
             .then(() => {
                 onSuccess();
             })
             .catch((error) => {
-                console.warn("Error deleting service date:", error);
+                console.warn("Error removing service tracking:", error);
             })
             .finally(() => {
                 onClose();
@@ -47,11 +44,11 @@ const DeleteServiceDateModal: React.FC<DeleteServiceDateModalProps> = ({ isOpen,
                 }}
             >
                 <Typography variant="h6" align="center">
-                    Delete Service Date for this item?
+                    Remove Service Tracking for this item?
                 </Typography>
                 <Box sx={{ display: "flex", justifyContent: "space-between", mt: 2 }}>
-                    <Button variant="contained" color="primary" onClick={() => deleteServiceDate(serviceDateIdToDelete)}>
-                        Delete
+                    <Button variant="contained" color="primary" onClick={removeServiceTracking}>
+                        Remove
                     </Button>
                     <Button variant="outlined" color="info" onClick={onClose}>
                         Cancel
@@ -62,4 +59,4 @@ const DeleteServiceDateModal: React.FC<DeleteServiceDateModalProps> = ({ isOpen,
     );
 };
 
-export default DeleteServiceDateModal;
+export default RemoveServiceTrackingModal;

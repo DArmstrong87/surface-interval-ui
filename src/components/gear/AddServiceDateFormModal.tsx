@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Box, Modal, Typography, TextField, Button } from "@mui/material";
 import APIService from "../../api/APIService";
+import { todaysDate } from "../../utils/timezone";
 
 interface AddServiceDateFormModalProps {
     isOpen: boolean;
@@ -9,12 +10,7 @@ interface AddServiceDateFormModalProps {
     onSuccess: () => void;
 }
 
-const AddServiceDateFormModal: React.FC<AddServiceDateFormModalProps> = ({
-    isOpen,
-    onClose,
-    gearItemId,
-    onSuccess,
-}) => {
+const AddServiceDateFormModal: React.FC<AddServiceDateFormModalProps> = ({ isOpen, onClose, gearItemId, onSuccess }) => {
     const [serviceDate, setServiceDate] = useState("");
 
     const addServiceDate = (gearItemId: string) => {
@@ -59,6 +55,7 @@ const AddServiceDateFormModal: React.FC<AddServiceDateFormModalProps> = ({
                         value={serviceDate}
                         onChange={(e) => setServiceDate(e.target.value)}
                         InputLabelProps={{ shrink: true }}
+                        inputProps={{ max: todaysDate }}
                     />
                     <Button variant="contained" color="primary" onClick={() => addServiceDate(gearItemId)}>
                         Add

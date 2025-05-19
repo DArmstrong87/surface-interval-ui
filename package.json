@@ -30,7 +30,9 @@
     "eject": "react-scripts eject",
     "format": "prettier --write \"**/*.{ts,tsx}\"",
     "format:check": "prettier --check \"**/*.{ts,tsx}\"",
-    "lint": "eslint src"
+    "lint": "eslint src",
+    "type-check": "tsc --noEmit",
+    "check-all": "npm run format && npm run lint && npm run type-check"
   },
   "browserslist": {
     "production": [
