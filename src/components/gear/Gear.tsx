@@ -2,20 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import APIService from "../../api/APIService";
 import { GearItem, GearSet } from "../../interfaces";
-import {
-    Box,
-    Button,
-    Typography,
-    Paper,
-    Table,
-    TableBody,
-    TableCell,
-    TableContainer,
-    TableHead,
-    TableRow,
-    Divider,
-    Grid,
-} from "@mui/material";
+import { Box, Button, Typography, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Divider, Grid } from "@mui/material";
 import OctopusSpinner from "../../OctopusSpinner";
 import { loadingSpinnerTime } from "../Constants";
 
@@ -27,10 +14,7 @@ function Gear() {
 
     useEffect(() => {
         const fetchData = async () => {
-            const [gearSets, gearItems] = await Promise.all([
-                APIService.fetchData<GearSet[]>("/gear-sets"),
-                APIService.fetchData<GearItem[]>("/gear-items"),
-            ]);
+            const [gearSets, gearItems] = await Promise.all([APIService.fetchData<GearSet[]>("/gear-sets"), APIService.fetchData<GearItem[]>("/gear-items")]);
             setGearSets(gearSets);
             setGearItems(gearItems);
             setTimeout(() => setLoading(false), loadingSpinnerTime);
@@ -50,7 +34,7 @@ function Gear() {
                     justifyContent: "center",
                 }}
             >
-                <OctopusSpinner size={96} />
+                <OctopusSpinner />
             </Box>
         );
     }
@@ -78,12 +62,7 @@ function Gear() {
                                     </TableHead>
                                     <TableBody>
                                         {gearSet.gear_items.map((gearItem, idx) => (
-                                            <TableRow
-                                                key={`${idx}-gear-item-table-row`}
-                                                hover
-                                                sx={{ cursor: "pointer" }}
-                                                onClick={() => navigate(`/gear/${gearItem.id}`)}
-                                            >
+                                            <TableRow key={`${idx}-gear-item-table-row`} hover sx={{ cursor: "pointer" }} onClick={() => navigate(`/gear/${gearItem.id}`)}>
                                                 <TableCell>{gearItem?.name}</TableCell>
                                                 <TableCell>{gearItem?.gear_type?.name}</TableCell>
                                             </TableRow>
@@ -104,12 +83,7 @@ function Gear() {
 
     function gearItemList(gearItems: GearItem[]) {
         return gearItems.map((gearItem, index) => (
-            <TableRow
-                key={`${index}-gear-items-table-row`}
-                hover
-                sx={{ cursor: "pointer" }}
-                onClick={() => navigate(`/gear/${gearItem.id}`)}
-            >
+            <TableRow key={`${index}-gear-items-table-row`} hover sx={{ cursor: "pointer" }} onClick={() => navigate(`/gear/${gearItem.id}`)}>
                 <TableCell>{gearItem.name}</TableCell>
                 <TableCell>{gearItem.gear_type?.name || gearItem.custom_gear_type?.name || "Unknown Type"}</TableCell>
             </TableRow>

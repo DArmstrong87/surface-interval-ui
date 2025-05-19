@@ -1,4 +1,4 @@
-name: Lint and Format Check
+name: Format, Lint, and Type-Check
 
 on:
   push:
@@ -26,3 +26,6 @@ jobs:
 
     - name: Run ESLint
       run: npx eslint "src/**/*.{ts,tsx}"
+
+    - name: Run type-check
+      run: npx tsc --noEmit

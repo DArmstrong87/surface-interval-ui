@@ -71,4 +71,4 @@ class APIService {
     }
 }
 
-export default new APIService() as APIService;
+export default new APIService();

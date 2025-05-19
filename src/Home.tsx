@@ -48,11 +48,9 @@ function Home() {
                             Plan // Dive // Log // Repeat
                         </Typography>
                         <p />
-                        A surface interval is the time spend between dives for the purpose of reducing residual
-                        nitrogen, logging the previous dive and planning for the next one.
+                        A surface interval is the time spend between dives for the purpose of reducing residual nitrogen, logging the previous dive and planning for the next one.
                         <p />
-                        Surface Interval tracks your dives, gear and certifications, allowing you to access them from
-                        anywhere.
+                        Surface Interval tracks your dives, gear and certifications, allowing you to access them from anywhere.
                     </Box>
                 </Box>
             </header>

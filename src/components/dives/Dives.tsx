@@ -1,18 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import {
-    Container,
-    Typography,
-    Button,
-    Paper,
-    Table,
-    TableBody,
-    TableCell,
-    TableContainer,
-    TableHead,
-    TableRow,
-    Box,
-} from "@mui/material";
+import { Container, Typography, Button, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Box } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import APIService from "../../api/APIService";
 import { Dive } from "../../interfaces";
@@ -45,7 +33,7 @@ function Dives() {
                     justifyContent: "center",
                 }}
             >
-                <OctopusSpinner size={96} />
+                <OctopusSpinner />
             </Box>
         );
     }

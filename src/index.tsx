@@ -5,10 +5,17 @@ import reportWebVitals from "./reportWebVitals";
 import { BrowserRouter } from "react-router-dom";
 import { ApplicationViews } from "./ApplicationViews";
 
+const router = {
+    future: {
+        v7_startTransition: true,
+        v7_relativeSplatPath: true,
+    },
+};
+
 const root = ReactDOM.createRoot(document.getElementById("root") as HTMLElement);
 root.render(
     <React.StrictMode>
-        <BrowserRouter>
+        <BrowserRouter future={router.future}>
             <ApplicationViews />
         </BrowserRouter>
     </React.StrictMode>,
