@@ -3,8 +3,7 @@ import { TextField, FormControlLabel, Checkbox, Link, Grid, Box, Button, Contain
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { LoginForm } from "../interfaces";
-
-const baseURL = "http://127.0.0.1:8000/";
+import { BASE_URL } from "../api/APIService";
 
 function Login() {
     const defaultTheme = createTheme();
@@ -26,13 +25,13 @@ function Login() {
         e.preventDefault();
         setSubmitHidden(true);
         const axiosInstance = axios.create({
-            baseURL: baseURL,
+            baseURL: BASE_URL,
             timeout: 10000,
             headers: {
                 "Content-Type": "application/json",
             },
         });
-        axiosInstance.post(`${baseURL}/login`, loginForm).then((res) => {
+        axiosInstance.post(`login`, loginForm).then((res) => {
             localStorage.setItem("si_token", res.data.token);
             navigate("/");
         });
