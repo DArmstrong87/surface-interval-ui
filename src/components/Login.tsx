@@ -31,7 +31,7 @@ function Login() {
                 "Content-Type": "application/json",
             },
         });
-        axiosInstance.post(`${BASE_URL}/login`, loginForm).then((res) => {
+        axiosInstance.post(`login`, loginForm).then((res) => {
             localStorage.setItem("si_token", res.data.token);
             navigate("/");
         });
