@@ -1,6 +1,6 @@
 import axios, { AxiosResponse, AxiosError } from "axios";
 
-const BASE_URL = "http://127.0.0.1:8000/";
+export const BASE_URL = "http://127.0.0.1:8000";
 
 class APIService {
     private axiosInstance = axios.create({
