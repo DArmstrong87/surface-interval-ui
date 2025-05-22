@@ -125,12 +125,20 @@ function LogDive() {
     };
 
     return (
-        <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center", mt: 4 }}>
+        <Box
+            sx={{
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                width: { xs: "350px", sm: "500px" },
+                margin: { xs: "2rem auto 0 auto", md: "2rem auto 2rem auto" },
+            }}
+        >
             <Paper elevation={3} sx={{ p: 4, maxWidth: 500, width: "100%" }}>
                 <Typography variant="h4" component="h1" gutterBottom align="center">
                     Log Dive
                 </Typography>
-                <Box component="form" onSubmit={handleLogDiveSubmit} sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
+                <Box component="form" onSubmit={handleLogDiveSubmit} sx={{ display: "flex", flexDirection: "column", gap: 2, width: "100%" }}>
                     <TextField label="Date" name="date" type="date" value={formState.date} onChange={handleInputChange} InputLabelProps={{ shrink: true }} required fullWidth />
                     <TextField label="Location" name="location" type="text" value={formState.location} onChange={handleInputChange} required fullWidth />
                     <TextField label="Site" name="site" type="text" value={formState.site} onChange={handleInputChange} required fullWidth />

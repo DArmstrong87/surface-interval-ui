@@ -79,7 +79,7 @@ export default function ButtonAppBar() {
                             { label: "Dive Log", path: "dives" },
                             { label: "Dive Plan", path: "dive-planner" },
                             { label: "Gear", path: "gear" },
-                            { label: "Profile", path: "" },
+                            // { label: "Profile", path: "" },
                             { label: "Logout", action: logout },
                         ].map(({ label, path, action }) => (
                             <Typography
