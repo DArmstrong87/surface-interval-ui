@@ -1,16 +1,29 @@
 import axios, { AxiosResponse, AxiosError } from "axios";
 
-export const BASE_URL = "http://127.0.0.1:8000";
+export const BASE_URL = "http://localhost:8000";
+// export const BASE_URL = "https://surface-interval-server-931350853391.us-central1.run.app";
 
 class APIService {
-    private axiosInstance = axios.create({
-        baseURL: BASE_URL,
-        timeout: 10000,
-        headers: {
-            "Content-Type": "application/json",
-            Authorization: `Token ${localStorage.getItem("si_token")}`,
-        },
-    });
+    private axiosInstance;
+
+    constructor() {
+        this.axiosInstance = axios.create({
+            baseURL: BASE_URL,
+            timeout: 10000,
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `Token ${localStorage.getItem("si_token")}`,
+            },
+        });
+
+        this.axiosInstance.interceptors.request.use((config) => {
+            const token = localStorage.getItem("si_token");
+            if (token) {
+                config.headers.Authorization = `Token ${token}`;
+            }
+            return config;
+        });
+    }
 
     // GET request
     public async fetchData<T>(endpoint: string): Promise<T> {

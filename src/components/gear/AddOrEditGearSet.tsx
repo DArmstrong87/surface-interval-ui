@@ -158,7 +158,7 @@ function AddOrEditGearSet() {
                                 gearTypes
                                     .filter((gearType) => gearItems.some((item) => item.gear_type?.name === gearType.name))
                                     .map((gearType) => (
-                                        <Grid item xs={12} md={6} key={gearType.id}>
+                                        <Grid key={gearType.id}>
                                             <Typography variant="subtitle1" sx={{ mb: 1, fontWeight: 600 }}>
                                                 {gearType.name}
                                             </Typography>
@@ -183,7 +183,7 @@ function AddOrEditGearSet() {
                                 customGearTypes
                                     .filter((customGearType) => gearItems.some((item) => item.custom_gear_type?.id === customGearType.id))
                                     .map((customGearType) => (
-                                        <Grid item xs={12} md={6} key={customGearType.id}>
+                                        <Grid key={customGearType.id}>
                                             <Typography variant="subtitle1" sx={{ mb: 1, fontWeight: 600 }}>
                                                 {customGearType.name}
                                             </Typography>

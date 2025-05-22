@@ -4,6 +4,7 @@ import Box from "@mui/material/Box";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import { useNavigate } from "react-router-dom";
+
 export default function ButtonAppBar() {
     const navigate = useNavigate();
 
@@ -23,153 +24,87 @@ export default function ButtonAppBar() {
 
     return (
         <>
-            <Box sx={{ flexGrow: 1 }}>
-                <AppBar position="static">
-                    <Toolbar>
-                        <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", maxWidth: "100px" }}>
-                            <img
-                                src={dive_flag}
-                                alt="logo"
-                                style={{
-                                    maxWidth: "60px",
-                                    maxHeight: "60px",
-                                    objectFit: "contain",
-                                    display: "block",
-                                }}
-                            />
-                        </Box>
-                        <Box
+            <AppBar position="static">
+                <Toolbar
+                    sx={{
+                        display: "flex",
+                        flexDirection: { xs: "column", sm: "row" },
+                        alignItems: "center",
+                        justifyContent: "start",
+                        gap: 1,
+                        px: 2,
+                    }}
+                >
+                    {/* Logo + Title Row */}
+                    <Box
+                        sx={{
+                            display: "flex",
+                            alignItems: "center",
+                            gap: 1,
+                            flexDirection: "row",
+                        }}
+                    >
+                        <img
+                            src={dive_flag}
+                            alt="logo"
+                            style={{
+                                maxWidth: "60px",
+                                maxHeight: "60px",
+                                objectFit: "contain",
+                            }}
+                        />
+                        <Typography
+                            variant="h5"
                             sx={{
-                                display: "flex",
-                                justifyContent: "center",
-                                alignItems: "center",
-                                width: "100%",
-                                gap: 3,
+                                fontWeight: "bold",
+                                textAlign: "center",
+                                color: "white",
                             }}
                         >
+                            Surface Interval
+                        </Typography>
+                    </Box>
+
+                    {/* Navigation */}
+                    <Box
+                        sx={{
+                            display: "flex",
+                            flexWrap: "wrap",
+                            justifyContent: "space-around",
+                            gap: 1,
+                            mt: { xs: 1, sm: 0 },
+                        }}
+                    >
+                        {[
+                            { label: "Dive Log", path: "dives" },
+                            { label: "Dive Plan", path: "dive-planner" },
+                            { label: "Gear", path: "gear" },
+                            { label: "Profile", path: "" },
+                            { label: "Logout", action: logout },
+                        ].map(({ label, path, action }) => (
                             <Typography
-                                variant="h4"
-                                component="div"
+                                key={label}
+                                variant="body1"
                                 sx={{
                                     cursor: "pointer",
-                                    flexGrow: 1,
-                                    textAlign: "center",
+                                    color: "white",
                                     px: 2,
-                                    py: 0.5,
+                                    py: 1,
                                     borderRadius: 1,
+                                    textAlign: "center",
                                     ":hover": {
                                         color: "orange",
-                                        transition: "all 0.5s",
+                                        backgroundColor: "rgba(255,255,255,0.1)",
                                     },
                                 }}
-                                onClick={() => navTo("")}
+                                onClick={() => (action ? action() : navTo(path))}
                             >
-                                Surface Interval
+                                {label}
                             </Typography>
-                            <Typography
-                                variant="h6"
-                                component="div"
-                                sx={{
-                                    cursor: "pointer",
-                                    flexGrow: 1,
-                                    textAlign: "center",
-                                    px: 2,
-                                    py: 0.5,
-                                    borderRadius: 1,
-                                    ":hover": {
-                                        color: "orange",
-                                        background: "rgba(255,255,255,0.1)",
-                                        transition: "all 0.3s",
-                                    },
-                                }}
-                                onClick={() => navTo("dives")}
-                            >
-                                Dive Log
-                            </Typography>
-                            <Typography
-                                variant="h6"
-                                component="div"
-                                sx={{
-                                    cursor: "pointer",
-                                    flexGrow: 1,
-                                    textAlign: "center",
-                                    px: 2,
-                                    py: 0.5,
-                                    borderRadius: 1,
-                                    ":hover": {
-                                        color: "orange",
-                                        background: "rgba(255,255,255,0.1)",
-                                        transition: "all 0.3s",
-                                    },
-                                }}
-                                onClick={() => navTo("dive-planner")}
-                            >
-                                Dive Plan
-                            </Typography>
-                            <Typography
-                                variant="h6"
-                                component="div"
-                                sx={{
-                                    cursor: "pointer",
-                                    flexGrow: 1,
-                                    textAlign: "center",
-                                    px: 2,
-                                    py: 0.5,
-                                    borderRadius: 1,
-                                    ":hover": {
-                                        color: "orange",
-                                        background: "rgba(255,255,255,0.1)",
-                                        transition: "all 0.3s",
-                                    },
-                                }}
-                                onClick={() => navTo("gear")}
-                            >
-                                Gear
-                            </Typography>
-                            <Typography
-                                variant="h6"
-                                component="div"
-                                sx={{
-                                    cursor: "pointer",
-                                    flexGrow: 1,
-                                    textAlign: "center",
-                                    px: 2,
-                                    py: 0.5,
-                                    borderRadius: 1,
-                                    ":hover": {
-                                        color: "orange",
-                                        background: "rgba(255,255,255,0.1)",
-                                        transition: "all 0.3s",
-                                    },
-                                }}
-                                onClick={() => navTo("")}
-                            >
-                                Profile
-                            </Typography>
-                            <Typography
-                                variant="h6"
-                                component="div"
-                                sx={{
-                                    cursor: "pointer",
-                                    flexGrow: 1,
-                                    textAlign: "center",
-                                    px: 2,
-                                    py: 0.5,
-                                    borderRadius: 1,
-                                    ":hover": {
-                                        color: "orange",
-                                        background: "rgba(255,255,255,0.1)",
-                                        transition: "all 0.3s",
-                                    },
-                                }}
-                                onClick={logout}
-                            >
-                                Logout
-                            </Typography>
-                        </Box>
-                    </Toolbar>
-                </AppBar>
-            </Box>
+                        ))}
+                    </Box>
+                </Toolbar>
+            </AppBar>
         </>
     );
 }
