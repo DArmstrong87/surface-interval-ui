@@ -2,13 +2,12 @@ import { Navigate, Outlet } from "react-router-dom";
 import TemporaryDrawer from "./Navigation";
 
 export const Authorized = () => {
-    if (localStorage.getItem("si_token")) {
+    const token = localStorage.getItem("si_token");
+    if (token && token !== null && token !== undefined) {
         return (
             <>
                 <TemporaryDrawer />
-                <main className="p-4">
-                    <Outlet />
-                </main>
+                <Outlet />
             </>
         );
     }

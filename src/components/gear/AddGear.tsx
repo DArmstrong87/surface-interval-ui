@@ -218,8 +218,17 @@ function AddGear() {
     };
 
     return (
-        <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center", mt: 4 }}>
-            <Paper elevation={3} sx={{ p: 4, maxWidth: 500, width: "100%" }}>
+        <Box
+            sx={{
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                mt: 4,
+                width: { xs: "300px", sm: "500px" },
+                margin: { xs: "2rem auto 0 auto", md: "2rem auto 0 auto" },
+            }}
+        >
+            <Paper elevation={3} sx={{ p: 4, width: "100%", maxWidth: "100%" }}>
                 <Typography variant="h4" component="h1" gutterBottom align="center">
                     Add Gear
                 </Typography>

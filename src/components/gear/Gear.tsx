@@ -43,7 +43,7 @@ function Gear() {
         return (
             <Grid container spacing={2}>
                 {gearSets.map((gearSet, index) => (
-                    <Grid item xs={12} md={6} key={`${index}-gear-set-card`}>
+                    <Grid key={`${index}-gear-set-card`}>
                         <Paper elevation={3} sx={{ p: 2 }}>
                             <Typography
                                 variant="h6"

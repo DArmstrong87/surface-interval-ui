@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { TextField, FormControlLabel, Checkbox, Link, Grid, Box, Button, Container, ThemeProvider, Typography, createTheme, CircularProgress, Paper } from "@mui/material";
+import { useEffect, useState } from "react";
+import { TextField, Link, Grid, Box, Button, Container, ThemeProvider, Typography, createTheme, CircularProgress, Paper } from "@mui/material";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { LoginForm } from "../interfaces";
@@ -13,6 +13,15 @@ function Login() {
         email: "",
         password: "",
     });
+    const [loginError, setLoginError] = useState<boolean>(false);
+
+    // Look for existing token. If exists, nav home.
+    const token = localStorage.getItem("si_token");
+    useEffect(() => {
+        if (token && token !== null && token !== undefined) {
+            navigate("../");
+        }
+    }, [token]);
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setLoginForm({
@@ -24,6 +33,7 @@ function Login() {
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         setSubmitHidden(true);
+        setLoginError(false);
         const axiosInstance = axios.create({
             baseURL: BASE_URL,
             timeout: 10000,
@@ -32,8 +42,15 @@ function Login() {
             },
         });
         axiosInstance.post(`login`, loginForm).then((res) => {
-            localStorage.setItem("si_token", res.data.token);
-            navigate("/");
+            if (res.data.valid === true) {
+                const token = res.data.token;
+                axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+                localStorage.setItem("si_token", token);
+                navigate("/");
+            } else {
+                setSubmitHidden(false);
+                setLoginError(true);
+            }
         });
     };
 
@@ -51,7 +68,7 @@ function Login() {
                 <Container maxWidth="sm">
                     <Paper elevation={6} sx={{ p: 4, borderRadius: 3 }}>
                         <Typography variant="h4" align="center" gutterBottom sx={{ fontWeight: 700 }}>
-                            Welcome to Surface Interval
+                            Surface Interval
                         </Typography>
                         <Typography component="h1" variant="h6" align="center" sx={{ mb: 2 }}>
                             Sign in
@@ -81,7 +98,9 @@ function Login() {
                                 value={loginForm.password}
                                 onChange={handleInputChange}
                             />
-                            <FormControlLabel control={<Checkbox value="remember" color="primary" />} id="Remember me" name="Remember me" label="Remember me" />
+                            {loginError && <Typography style={{ color: "red" }}>Email or password is incorrect.</Typography>}
+
+                            {/* <FormControlLabel control={<Checkbox value="remember" color="primary" />} id="Remember me" name="Remember me" label="Remember me" /> */}
                             {!submitHidden && (
                                 <Button type="submit" fullWidth id="submitButton" variant="contained" sx={{ mt: 3, mb: 2 }}>
                                     Sign In
@@ -92,13 +111,13 @@ function Login() {
                                     <CircularProgress />
                                 </Box>
                             )}
-                            <Grid container>
-                                <Grid item xs>
-                                    <Link href="#" variant="body2">
+                            <Grid container style={{ display: "flex", justifyContent: "space-between" }}>
+                                <Grid>
+                                    {/* <Link href="#" variant="body2">
                                         Forgot password?
-                                    </Link>
+                                    </Link> */}
                                 </Grid>
-                                <Grid item>
+                                <Grid>
                                     <Link href="#" variant="body2">
                                         {"Don't have an account? Sign Up"}
                                     </Link>

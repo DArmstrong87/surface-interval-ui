@@ -1,24 +1,62 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Container, Typography, Button, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Box } from "@mui/material";
+import { Container, Typography, Button, Paper, Box } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import APIService from "../../api/APIService";
 import { Dive } from "../../interfaces";
 import OctopusSpinner from "../../OctopusSpinner";
 import { loadingSpinnerTime } from "../Constants";
+import { DataGrid, GridRowsProp, GridColDef } from "@mui/x-data-grid";
 
 function Dives() {
     const navigate = useNavigate();
     const [dives, setDives] = useState<Dive[]>([]);
     const [loading, setLoading] = useState(true);
+    const rows: GridRowsProp = dives;
+    const columns: GridColDef[] = [
+        { field: "dive_number", headerName: "Number", width: 100, flex: 1, minWidth: 100 },
+        { field: "date", headerName: "Date", width: 150, flex: 1, minWidth: 150 },
+        { field: "location", headerName: "Location", width: 250, flex: 1, minWidth: 250 },
+        {
+            field: "site",
+            headerName: "Site",
+            type: "string",
+            width: 250,
+            flex: 1,
+            minWidth: 250,
+        },
+        {
+            field: "water",
+            headerName: "Water",
+            width: 100,
+            flex: 1,
+            minWidth: 100,
+        },
+        {
+            field: "depth",
+            headerName: "Depth",
+            width: 100,
+            flex: 1,
+            minWidth: 100,
+        },
+        {
+            field: "time",
+            headerName: "Time",
+            width: 100,
+            flex: 1,
+            minWidth: 100,
+        },
+    ];
 
     useEffect(() => {
-        APIService.fetchData<Dive[]>("/dives").then((dives) => {
-            setDives(dives);
-            setTimeout(() => {
-                setLoading(false);
-            }, loadingSpinnerTime);
-        });
+        APIService.fetchData<Dive[]>("/dives")
+            .then((dives) => {
+                setDives(dives);
+                setTimeout(() => {
+                    setLoading(false);
+                }, loadingSpinnerTime);
+            })
+            .catch((err) => console.log(err));
     }, []);
 
     if (loading) {
@@ -49,41 +87,27 @@ function Dives() {
                 </Button>
             </Box>
 
-            <TableContainer component={Paper} elevation={3}>
-                <Table sx={{ minWidth: 650 }} aria-label="dive log table">
-                    <TableHead>
-                        <TableRow sx={{ backgroundColor: "primary.main" }}>
-                            <TableCell sx={{ color: "white" }}>Number</TableCell>
-                            <TableCell sx={{ color: "white" }}>Date</TableCell>
-                            <TableCell sx={{ color: "white" }}>Location</TableCell>
-                            <TableCell sx={{ color: "white" }}>Site</TableCell>
-                            <TableCell sx={{ color: "white" }}>Water</TableCell>
-                            <TableCell sx={{ color: "white" }}>Depth</TableCell>
-                            <TableCell sx={{ color: "white" }}>Time</TableCell>
-                        </TableRow>
-                    </TableHead>
-                    <TableBody>
-                        {dives.map((dive, index) => (
-                            <TableRow
-                                key={index}
-                                sx={{
-                                    "&:nth-of-type(odd)": { backgroundColor: "action.hover" },
-                                    "&:hover": { cursor: "pointer" },
-                                }}
-                                onClick={() => navigate(`/dives/${dive.id}`)}
-                            >
-                                <TableCell>{dive.dive_number}</TableCell>
-                                <TableCell>{dive.date}</TableCell>
-                                <TableCell>{dive.location}</TableCell>
-                                <TableCell>{dive.site}</TableCell>
-                                <TableCell>{dive.water}</TableCell>
-                                <TableCell>{dive.depth}</TableCell>
-                                <TableCell>{dive.time}</TableCell>
-                            </TableRow>
-                        ))}
-                    </TableBody>
-                </Table>
-            </TableContainer>
+            <Paper sx={{ height: { lg: 800, md: 700, sm: 600, xs: 600 }, width: "100%" }}>
+                <DataGrid
+                    rows={rows}
+                    columns={columns}
+                    initialState={{
+                        pagination: {
+                            paginationModel: {
+                                pageSize: 50,
+                            },
+                        },
+                    }}
+                    pageSizeOptions={[10, 25, 50, 100]}
+                    sx={{
+                        "& .MuiDataGrid-columnHeader": {
+                            backgroundColor: "primary.main",
+                            color: "white",
+                            fontWeight: "bold",
+                        },
+                    }}
+                />
+            </Paper>
         </Container>
     );
 }
