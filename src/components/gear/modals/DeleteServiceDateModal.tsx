@@ -32,7 +32,7 @@ const DeleteServiceDateModal: React.FC<DeleteServiceDateModalProps> = ({ isOpen,
     };
 
     return (
-        <Modal open={isOpen} onClose={onClose}>
+        <Modal open={isOpen} onClose={onClose} sx={{ margin: { xs: "auto 2.5em auto 2.5rem" } }}>
             <Box
                 sx={{
                     position: "absolute",

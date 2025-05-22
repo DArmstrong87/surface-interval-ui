@@ -131,7 +131,17 @@ function DivePlanner() {
     }
 
     return (
-        <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center", mt: 4, width: { sm: "500px", md: "600px" }, maxWidth: "100%", margin: { sm: "2rem auto 0 auto", xs: "2rem 3rem 0 3rem" } }}>
+        <Box
+            sx={{
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                mt: 4,
+                width: { sm: "500px", md: "600px" },
+                maxWidth: "100%",
+                margin: { sm: "2rem auto 0 auto", xs: "2rem 3rem 0 3rem" },
+            }}
+        >
             <Paper elevation={3} sx={{ p: 4, maxWidth: "100%", width: "100%" }}>
                 <Typography variant="h4" component="h1" gutterBottom align="center">
                     Dive Planner

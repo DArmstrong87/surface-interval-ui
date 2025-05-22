@@ -104,6 +104,9 @@ function GearItemDetail() {
 
     const closeDeleteGearItemModal = () => {
         setShowDeleteGearItemModal(false);
+    };
+
+    const navigateBackToGear = () => {
         navigate("/gear");
     };
 
@@ -167,12 +170,21 @@ function GearItemDetail() {
                 onClose={closeRemoveServiceTrackingModal}
                 onSuccess={fetchGearItemAndServiceInterval}
             />
-            <DeleteGearItemModal isOpen={showDeleteGearItemModal} gearItemId={gearItemId} onClose={closeDeleteGearItemModal} onSuccess={fetchGearItemAndServiceInterval} />
+            <DeleteGearItemModal isOpen={showDeleteGearItemModal} gearItemId={gearItemId} onClose={closeDeleteGearItemModal} onSuccess={navigateBackToGear} />
             {/* END FORM MODALS */}
 
             {/* MAIN CONTENT */}
-            <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center", mt: 4 }}>
-                <Paper elevation={3} sx={{ p: 4, maxWidth: 500, width: "100%" }}>
+            <Box
+                sx={{
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "center",
+                    mt: 4,
+                    width: { xs: "300px", sm: "500px" },
+                    margin: { xs: "2rem auto 0 auto", md: "2rem auto 0 auto" },
+                }}
+            >
+                <Paper elevation={3} sx={{ p: 4, maxWidth: "100%", width: "100%" }}>
                     <Typography variant="h4" gutterBottom align="center">
                         Gear Item Detail
                     </Typography>
