@@ -4,7 +4,7 @@ import { Container, Typography, Button, Paper, Box } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import APIService from "../../api/APIService";
 import { Dives } from "../../interfaces";
-import OctopusSpinner from "../../OctopusSpinner";
+import RandomSpinner from "../../RandomSpinner";
 import { loadingSpinnerTime } from "../Constants";
 import { DataGrid, GridRowsProp, GridColDef } from "@mui/x-data-grid";
 
@@ -62,14 +62,13 @@ function DiveLog() {
             <Box
                 sx={{
                     width: "100vw",
-                    height: "100vh",
-                    bgcolor: "white",
+                    height: "75vh",
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "center",
                 }}
             >
-                <OctopusSpinner />
+                <RandomSpinner />
             </Box>
         );
     }

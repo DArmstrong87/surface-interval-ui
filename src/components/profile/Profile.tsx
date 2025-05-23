@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Container, Typography, Box } from "@mui/material";
 import APIService from "../../api/APIService";
 import { Diver } from "../../interfaces";
-import OctopusSpinner from "../../OctopusSpinner";
+import RandomSpinner from "../../RandomSpinner";
 import { loadingSpinnerTime } from "../Constants";
 
 import DiveStats from "../dives/DiveStats";
@@ -25,14 +25,14 @@ function Profile() {
             <Box
                 sx={{
                     width: "100vw",
-                    height: "100vh",
+                    height: "75vh",
                     bgcolor: "white",
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "center",
                 }}
             >
-                <OctopusSpinner />
+                <RandomSpinner />
             </Box>
         );
     }

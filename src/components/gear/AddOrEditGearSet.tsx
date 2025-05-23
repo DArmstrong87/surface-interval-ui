@@ -3,7 +3,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import APIService from "../../api/APIService";
 import { GearType, CustomGearType, GearItem, GearSet } from "../../interfaces";
 import { Box, Button, Checkbox, Divider, FormControlLabel, Paper, TextField, Typography, Grid } from "@mui/material";
-import OctopusSpinner from "../../OctopusSpinner";
+import RandomSpinner from "../../RandomSpinner";
 import { loadingSpinnerTime } from "../Constants";
 import DeleteGearSetModal from "./DeleteGearSetModal";
 
@@ -62,14 +62,14 @@ function AddOrEditGearSet() {
             <Box
                 sx={{
                     width: "100vw",
-                    height: "100vh",
+                    height: "75vh",
                     bgcolor: "white",
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "center",
                 }}
             >
-                <OctopusSpinner />
+                <RandomSpinner />
             </Box>
         );
     }

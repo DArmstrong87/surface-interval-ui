@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback } from "react";
 import { planDive } from "./PlanDive";
 import { AIR, EANx32, EANx36 } from "./DiveTables";
 import { Box, Button, FormControl, FormControlLabel, FormLabel, Paper, Radio, RadioGroup, TextField, Typography, Divider } from "@mui/material";
-import OctopusSpinner from "../../OctopusSpinner";
+import RandomSpinner from "../../RandomSpinner";
 import { loadingSpinnerTime } from "../Constants";
 
 export interface DiveFormState {
@@ -118,14 +118,14 @@ function DivePlanner() {
             <Box
                 sx={{
                     width: "100vw",
-                    height: "100vh",
+                    height: "75vh",
                     bgcolor: "white",
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "center",
                 }}
             >
-                <OctopusSpinner />
+                <RandomSpinner />
             </Box>
         );
     }
