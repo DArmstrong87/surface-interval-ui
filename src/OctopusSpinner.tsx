@@ -23,10 +23,10 @@ const OctopusSpinner: React.FC<{ size?: number }> = ({ size = loadingSpinnerSize
         />
         <style>
             {`
-        @keyframes spin {
-          100% { transform: rotate(360deg); }
-        }
-      `}
+            @keyframes spin {
+                100% { transform: rotate(360deg); }
+            }
+        `}
         </style>
     </div>
 );

@@ -3,6 +3,45 @@ export interface LoginForm {
     password: string;
 }
 
+interface AirConsumption {
+    most_efficient: {
+        cu_ft_min: number;
+        ltrs_min: number;
+    };
+    least_efficient: {
+        cu_ft_min: number;
+        ltrs_min: number;
+    };
+    average: {
+        cu_ft_min: number;
+        ltrs_min: number;
+    };
+}
+
+export interface Diver {
+    id: number;
+    user: {
+        first_name: string;
+        last_name: string;
+        username: string;
+    };
+    units: string;
+    total_dives: number;
+    most_recent_dive: string;
+    deepest_dive: number | null;
+    longest_dive: number | null;
+    shortest_dive: number | null;
+    most_logged_specialty: {
+        specialty_name: string;
+        count: number;
+    };
+    air_consumption: AirConsumption | null;
+}
+
+export interface DiverProfileProps {
+    diver: Diver | undefined;
+}
+
 export interface Dive {
     id: number;
     date: string;
@@ -20,6 +59,8 @@ export interface Dive {
     favorite: boolean;
     dive_number: number;
 }
+
+export type Dives = Array<Dive>;
 
 export interface GearType {
     id: number;

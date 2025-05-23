@@ -37,11 +37,22 @@ export default function ButtonAppBar() {
                 >
                     {/* Logo + Title Row */}
                     <Box
+                        onClick={() => navTo("")}
                         sx={{
                             display: "flex",
                             alignItems: "center",
                             gap: 1,
                             flexDirection: "row",
+                            padding: 1,
+                            borderRadius: 1,
+                            cursor: "pointer",
+                            "&:hover .logo-text": {
+                                color: "orange",
+                            },
+                            "&:hover": {
+                                backgroundColor: "rgba(255,255,255,0.1)",
+                            },
+                            transition: "background-color 0.5s ease",
                         }}
                     >
                         <img
@@ -55,10 +66,12 @@ export default function ButtonAppBar() {
                         />
                         <Typography
                             variant="h5"
+                            className="logo-text"
                             sx={{
                                 fontWeight: "bold",
                                 textAlign: "center",
                                 color: "white",
+                                transition: "color 0.5s ease",
                             }}
                         >
                             Surface Interval
@@ -79,7 +92,7 @@ export default function ButtonAppBar() {
                             { label: "Dive Log", path: "dives" },
                             { label: "Dive Plan", path: "dive-planner" },
                             { label: "Gear", path: "gear" },
-                            // { label: "Profile", path: "" },
+                            { label: "Profile", path: "profile" },
                             { label: "Logout", action: logout },
                         ].map(({ label, path, action }) => (
                             <Typography
@@ -96,6 +109,7 @@ export default function ButtonAppBar() {
                                         color: "orange",
                                         backgroundColor: "rgba(255,255,255,0.1)",
                                     },
+                                    transition: "color 0.5s ease, background-color 0.5s ease",
                                 }}
                                 onClick={() => (action ? action() : navTo(path))}
                             >
