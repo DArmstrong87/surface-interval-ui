@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import APIService from "../../api/APIService";
 import { GearItem, GearSet } from "../../interfaces";
 import { Box, Button, Typography, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Divider, Grid } from "@mui/material";
-import OctopusSpinner from "../../OctopusSpinner";
+import RandomSpinner from "../../RandomSpinner";
 import { loadingSpinnerTime } from "../Constants";
 
 function Gear() {
@@ -27,14 +27,14 @@ function Gear() {
             <Box
                 sx={{
                     width: "100vw",
-                    height: "100vh",
+                    height: "75vh",
                     bgcolor: "white",
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "center",
                 }}
             >
-                <OctopusSpinner />
+                <RandomSpinner />
             </Box>
         );
     }

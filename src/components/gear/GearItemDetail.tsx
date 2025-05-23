@@ -3,7 +3,7 @@ import APIService from "../../api/APIService";
 import { GearItem } from "../../interfaces";
 import { useParams, useNavigate } from "react-router-dom";
 import { Box, Paper, Typography, Button, Divider, Alert, List, ListItem, IconButton } from "@mui/material";
-import OctopusSpinner from "../../OctopusSpinner";
+import RandomSpinner from "../../RandomSpinner";
 import DeleteIcon from "@mui/icons-material/Delete";
 import ServiceTrackingFormModal from "./modals/ServiceTrackingFormModal";
 import AddServiceDateFormModal from "./modals/AddServiceDateFormModal";
@@ -115,14 +115,14 @@ function GearItemDetail() {
             <Box
                 sx={{
                     width: "100vw",
-                    height: "100vh",
+                    height: "75vh",
                     bgcolor: "white",
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "center",
                 }}
             >
-                <OctopusSpinner />
+                <RandomSpinner />
             </Box>
         );
     }
