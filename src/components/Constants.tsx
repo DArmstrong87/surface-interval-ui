@@ -1,2 +1,2 @@
-export const loadingSpinnerTime = 500;
+export const loadingSpinnerTime = 200;
 export const loadingSpinnerSize = 100;

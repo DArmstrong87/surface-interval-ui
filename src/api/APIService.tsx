@@ -1,7 +1,7 @@
 import axios, { AxiosResponse, AxiosError } from "axios";
 
-export const BASE_URL = "http://localhost:8000";
-// export const BASE_URL = "https://surface-interval-server-931350853391.us-central1.run.app";
+// export const BASE_URL = "http://localhost:8000";
+export const BASE_URL = "https://surface-interval-server-931350853391.us-central1.run.app";
 
 class APIService {
     private axiosInstance;
