@@ -3,14 +3,14 @@ import { useNavigate } from "react-router-dom";
 import { Container, Typography, Button, Paper, Box } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import APIService from "../../api/APIService";
-import { Dive } from "../../interfaces";
+import { Dives } from "../../interfaces";
 import OctopusSpinner from "../../OctopusSpinner";
 import { loadingSpinnerTime } from "../Constants";
 import { DataGrid, GridRowsProp, GridColDef } from "@mui/x-data-grid";
 
-function Dives() {
+function DiveLog() {
     const navigate = useNavigate();
-    const [dives, setDives] = useState<Dive[]>([]);
+    const [dives, setDives] = useState<Dives>([]);
     const [loading, setLoading] = useState(true);
     const rows: GridRowsProp = dives;
     const columns: GridColDef[] = [
@@ -49,14 +49,12 @@ function Dives() {
     ];
 
     useEffect(() => {
-        APIService.fetchData<Dive[]>("/dives")
-            .then((dives) => {
-                setDives(dives);
-                setTimeout(() => {
-                    setLoading(false);
-                }, loadingSpinnerTime);
-            })
-            .catch((err) => console.log(err));
+        const fetchData = async () => {
+            const [dives] = await Promise.all([APIService.fetchData<Dives>("/dives")]);
+            setDives(dives);
+            setTimeout(() => setLoading(false), loadingSpinnerTime);
+        };
+        fetchData();
     }, []);
 
     if (loading) {
@@ -77,39 +75,43 @@ function Dives() {
     }
 
     return (
-        <Container maxWidth="lg" sx={{ py: 4 }}>
-            <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 3 }}>
-                <Typography variant="h4" component="h1" gutterBottom>
-                    Dive Log
-                </Typography>
-                <Button variant="contained" color="primary" startIcon={<AddIcon />} onClick={() => navigate("logDive")}>
-                    Log Dive
-                </Button>
-            </Box>
+        <>
+            <Container maxWidth="lg" sx={{ py: 4 }}>
+                <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", mb: 3 }}>
+                    <Typography variant="h4" component="h1" gutterBottom>
+                        Dive Log
+                    </Typography>
+                </Box>
+                <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", mb: 3 }}>
+                    <Button variant="contained" color="primary" startIcon={<AddIcon />} onClick={() => navigate("logDive")}>
+                        Log Dive
+                    </Button>
+                </Box>
 
-            <Paper sx={{ height: { lg: 800, md: 700, sm: 600, xs: 600 }, width: "100%" }}>
-                <DataGrid
-                    rows={rows}
-                    columns={columns}
-                    initialState={{
-                        pagination: {
-                            paginationModel: {
-                                pageSize: 50,
+                <Paper sx={{ height: { lg: 800, md: 700, sm: 600, xs: 600 }, width: "100%" }}>
+                    <DataGrid
+                        rows={rows}
+                        columns={columns}
+                        initialState={{
+                            pagination: {
+                                paginationModel: {
+                                    pageSize: 50,
+                                },
                             },
-                        },
-                    }}
-                    pageSizeOptions={[10, 25, 50, 100]}
-                    sx={{
-                        "& .MuiDataGrid-columnHeader": {
-                            backgroundColor: "primary.main",
-                            color: "white",
-                            fontWeight: "bold",
-                        },
-                    }}
-                />
-            </Paper>
-        </Container>
+                        }}
+                        pageSizeOptions={[10, 25, 50, 100]}
+                        sx={{
+                            "& .MuiDataGrid-columnHeader": {
+                                backgroundColor: "primary.light",
+                                color: "white",
+                                fontWeight: "bold",
+                            },
+                        }}
+                    />
+                </Paper>
+            </Container>
+        </>
     );
 }
 
-export default Dives;
+export default DiveLog;

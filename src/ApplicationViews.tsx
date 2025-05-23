@@ -1,6 +1,6 @@
 import React from "react";
 import { Route, Routes } from "react-router-dom";
-import Dives from "./components/dives/Dives";
+import DiveLog from "./components/dives/Dives";
 import Gear from "./components/gear/Gear";
 import AddGear from "./components/gear/AddGear";
 import LogDive from "./components/dives/LogDive";
@@ -10,6 +10,7 @@ import { Authorized } from "./components/Authorized";
 import DivePlanner from "./components/dive_planner/DivePlanner";
 import GearItemDetail from "./components/gear/GearItemDetail";
 import AddOrEditGearSet from "./components/gear/AddOrEditGearSet";
+import Profile from "./components/profile/Profile";
 
 export const ApplicationViews = () => {
     return (
@@ -18,7 +19,7 @@ export const ApplicationViews = () => {
                 <Route path="*" Component={Login} />
                 <Route element={<Authorized />}>
                     <Route path="/" Component={Home} />
-                    <Route path="/dives" Component={Dives} />
+                    <Route path="/dives" Component={DiveLog} />
                     <Route path="/dives/logDive" Component={LogDive} />
                     <Route path="/dive-planner" Component={DivePlanner} />
                     <Route path="/gear" Component={Gear} />
@@ -26,7 +27,7 @@ export const ApplicationViews = () => {
                     <Route path="/gear/add" Component={AddGear} />
                     <Route path="/gear/add-gear-set" Component={AddOrEditGearSet} />
                     <Route path="/gear/gear-set/:gearSetId" Component={AddOrEditGearSet} />
-                    <Route path="/profile" Component={Dives} />
+                    <Route path="/profile" Component={Profile} />
                 </Route>
             </Routes>
         </>
