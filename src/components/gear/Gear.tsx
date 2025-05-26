@@ -5,22 +5,36 @@ import { GearItem, GearSet } from "../../interfaces";
 import { Box, Button, Typography, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Divider, Grid } from "@mui/material";
 import RandomSpinner from "../../RandomSpinner";
 import { loadingSpinnerTime } from "../Constants";
+import ErrorNotification from "../common/ErrorNotification";
 
 function Gear() {
     const navigate = useNavigate();
     const [gearSets, setGearSets] = useState<GearSet[]>([]);
     const [gearItems, setGearItems] = useState<GearItem[]>([]);
     const [loading, setLoading] = useState(true);
+    const [APIerror, setAPIError] = useState<string | null>(null);
+    const [showAPIError, setShowAPIError] = useState(false);
 
     useEffect(() => {
         const fetchData = async () => {
-            const [gearSets, gearItems] = await Promise.all([APIService.fetchData<GearSet[]>("/gear-sets"), APIService.fetchData<GearItem[]>("/gear-items")]);
-            setGearSets(gearSets);
-            setGearItems(gearItems);
-            setTimeout(() => setLoading(false), loadingSpinnerTime);
+            try {
+                const [gearSets, gearItems] = await Promise.all([APIService.fetchData<GearSet[]>("/gear-sets"), APIService.fetchData<GearItem[]>("/gear-items")]);
+                setGearSets(gearSets);
+                setGearItems(gearItems);
+                setAPIError(null);
+            } catch (err) {
+                setAPIError("Failed to load gear. Please try again later.");
+                setShowAPIError(true);
+            } finally {
+                setTimeout(() => setLoading(false), loadingSpinnerTime);
+            }
         };
         fetchData();
     }, []);
+
+    const handleCloseError = () => {
+        setShowAPIError(false);
+    };
 
     if (loading) {
         return (
@@ -129,6 +143,7 @@ function Gear() {
                     No gear items created.
                 </Typography>
             )}
+            <ErrorNotification open={showAPIError} message={APIerror} onClose={handleCloseError} />
         </Box>
     );
 }

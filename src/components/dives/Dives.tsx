@@ -1,19 +1,20 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Container, Typography, Button, Paper, Box, Alert, Snackbar } from "@mui/material";
+import { Container, Typography, Button, Paper, Box } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import APIService from "../../api/APIService";
 import { Dives } from "../../interfaces";
 import RandomSpinner from "../../RandomSpinner";
 import { loadingSpinnerTime } from "../Constants";
 import { DataGrid, GridRowsProp, GridColDef } from "@mui/x-data-grid";
+import ErrorNotification from "../common/ErrorNotification";
 
 function DiveLog() {
     const navigate = useNavigate();
     const [dives, setDives] = useState<Dives>([]);
     const [loading, setLoading] = useState(true);
-    const [error, setError] = useState<string | null>(null);
-    const [showError, setShowError] = useState(false);
+    const [APIerror, setAPIError] = useState<string | null>(null);
+    const [showAPIError, setShowAPIError] = useState(false);
 
     const rows: GridRowsProp = dives;
     const columns: GridColDef[] = [
@@ -56,10 +57,10 @@ function DiveLog() {
             try {
                 const [dives] = await Promise.all([APIService.fetchData<Dives>("/dives")]);
                 setDives(dives);
-                setError(null);
+                setAPIError(null);
             } catch (err) {
-                setError("Failed to load dive log. Please try again later.");
-                setShowError(true);
+                setAPIError("Failed to load dive log. Please try again later.");
+                setShowAPIError(true);
             } finally {
                 setTimeout(() => setLoading(false), loadingSpinnerTime);
             }
@@ -68,7 +69,7 @@ function DiveLog() {
     }, []);
 
     const handleCloseError = () => {
-        setShowError(false);
+        setShowAPIError(false);
     };
 
     if (loading) {
@@ -123,11 +124,7 @@ function DiveLog() {
                     />
                 </Paper>
             </Container>
-            <Snackbar open={showError} autoHideDuration={6000} onClose={handleCloseError} anchorOrigin={{ vertical: "top", horizontal: "center" }}>
-                <Alert onClose={handleCloseError} severity="error" sx={{ width: "100%" }}>
-                    {error}
-                </Alert>
-            </Snackbar>
+            <ErrorNotification open={showAPIError} message={APIerror} onClose={handleCloseError} />
         </>
     );
 }
