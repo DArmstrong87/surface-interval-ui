@@ -21,6 +21,7 @@ import {
 } from "@mui/material";
 import RandomSpinner from "../../RandomSpinner";
 import { loadingSpinnerTime } from "../Constants";
+import ErrorNotification from "../common/ErrorNotification";
 
 interface NewGearItemFormState {
     gearTypeId: number | null;
@@ -52,13 +53,25 @@ function AddGear() {
     const [newGearItemServiceState, setNewGearItemService] = useState<GearItemService>(newGearItemServiceInitial);
     const [gearTypeError, setGearTypeError] = useState(false);
     const [loading, setLoading] = useState(true);
+    const [APIerror, setAPIError] = useState<string | null>(null);
+    const [showAPIError, setShowAPIError] = useState(false);
 
     useEffect(() => {
         const fetchData = async () => {
-            const [gearTypes, customGearTypes] = await Promise.all([APIService.fetchData<GearType[]>("/gear-types"), APIService.fetchData<CustomGearType[]>("/custom-gear-types")]);
-            setGearTypes(gearTypes);
-            setCustomGearTypes(customGearTypes);
-            setTimeout(() => setLoading(false), loadingSpinnerTime);
+            try {
+                const [gearTypes, customGearTypes] = await Promise.all([
+                    APIService.fetchData<GearType[]>("/gear-types"),
+                    APIService.fetchData<CustomGearType[]>("/custom-gear-types"),
+                ]);
+                setGearTypes(gearTypes);
+                setCustomGearTypes(customGearTypes);
+                setAPIError(null);
+            } catch (err) {
+                setAPIError("Failed to load gear types. Please try again later.");
+                setShowAPIError(true);
+            } finally {
+                setTimeout(() => setLoading(false), loadingSpinnerTime);
+            }
         };
         fetchData();
     }, []);
@@ -79,6 +92,10 @@ function AddGear() {
             </Box>
         );
     }
+
+    const handleCloseError = () => {
+        setShowAPIError(false);
+    };
 
     const postGearItem = async (formData: NewGearItemFormState): Promise<number | null> => {
         try {
@@ -218,129 +235,152 @@ function AddGear() {
     };
 
     return (
-        <Box
-            sx={{
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "center",
-                mt: 4,
-                width: { xs: "300px", sm: "500px" },
-                margin: { xs: "2rem auto 0 auto", md: "2rem auto 0 auto" },
-            }}
-        >
-            <Paper elevation={3} sx={{ p: 4, width: "100%", maxWidth: "100%" }}>
-                <Typography variant="h4" component="h1" gutterBottom align="center">
-                    Add Gear
-                </Typography>
-                <Box component="form" onSubmit={handleSubmit} sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
-                    {gearTypeError && <Alert severity="error">Select 1 of gear type, custom gear type or add a new custom gear type.</Alert>}
-                    <FormControl fullWidth>
-                        <InputLabel id="gearType-label">Gear Type</InputLabel>
-                        <Select
-                            labelId="gearType-label"
-                            id="gearType"
-                            name="gearType"
-                            value={newGearItemFormState.gearTypeId || ""}
-                            label="Gear Type"
-                            onChange={handleGearTypeChange}
-                        >
-                            <MenuItem value="">Select Gear Type</MenuItem>
-                            {gearTypes.map((gearType) => (
-                                <MenuItem key={gearType.id} value={gearType.id}>
-                                    {gearType.name}
-                                </MenuItem>
-                            ))}
-                        </Select>
-                    </FormControl>
-                    {customGearTypes.length > 0 && (
-                        <FormControl fullWidth>
-                            <InputLabel id="customGearType-label">Custom Gear Type</InputLabel>
-                            <Select
-                                labelId="customGearType-label"
-                                id="customGearType"
-                                name="customGearType"
-                                value={newGearItemFormState.customGearTypeId || ""}
-                                label="Custom Gear Type"
-                                onChange={handleGearTypeChange}
-                            >
-                                <MenuItem value="">Select Custom Gear Type</MenuItem>
-                                {customGearTypes.map((customGearType) => (
-                                    <MenuItem key={customGearType.id} value={customGearType.id}>
-                                        {customGearType.name}
-                                    </MenuItem>
-                                ))}
-                            </Select>
-                        </FormControl>
-                    )}
-                    <TextField
-                        label="Add Custom Gear Type"
-                        id="newCustomGearType"
-                        name="newCustomGearType"
-                        value={newGearItemFormState.newCustomGearType || ""}
-                        onChange={handleNewCustomGearTypeInput}
-                        fullWidth
-                    />
-                    <TextField label="Name" id="name" name="name" required value={newGearItemFormState.name} onChange={handleInput} fullWidth />
-                    <FormGroup>
-                        <FormControlLabel control={<Checkbox checked={trackService} onChange={handleTrackServiceChange} />} label="Track Service" />
-                    </FormGroup>
-                    {trackService && (
-                        <>
-                            <Divider sx={{ my: 2 }} />
-                            <Typography variant="h6" gutterBottom>
-                                Service Tracking
+        <>
+            {APIerror ? (
+                <>
+                    <ErrorNotification open={showAPIError} message={APIerror} onClose={handleCloseError} />
+                    <Box
+                        sx={{
+                            display: "flex",
+                            flexDirection: "column",
+                            alignItems: "center",
+                            mt: 4,
+                            width: { xs: "300px", sm: "500px" },
+                            margin: { xs: "2rem auto 0 auto", md: "2rem auto 0 auto" },
+                        }}
+                    >
+                        Something went wrong. Please try again later.
+                    </Box>
+                </>
+            ) : (
+                <>
+                    <Box
+                        sx={{
+                            display: "flex",
+                            flexDirection: "column",
+                            alignItems: "center",
+                            mt: 4,
+                            width: { xs: "300px", sm: "500px" },
+                            margin: { xs: "2rem auto 0 auto", md: "2rem auto 0 auto" },
+                        }}
+                    >
+                        <Paper elevation={3} sx={{ p: 4, width: "100%", maxWidth: "100%" }}>
+                            <Typography variant="h4" component="h1" gutterBottom align="center">
+                                Add Gear
                             </Typography>
-                            <TextField
-                                label="Purchase Date"
-                                id="purchaseDate"
-                                name="purchaseDate"
-                                type="date"
-                                required
-                                inputProps={{ max: today }}
-                                value={newGearItemServiceState.purchaseDate}
-                                onChange={handleDateInputs}
-                                fullWidth
-                                InputLabelProps={{ shrink: true }}
-                            />
-                            <TextField
-                                label="Last Serviced (optional)"
-                                id="serviceDate"
-                                name="serviceDate"
-                                type="date"
-                                inputProps={{ max: today }}
-                                value={newGearItemServiceState.serviceDate}
-                                onChange={handleDateInputs}
-                                fullWidth
-                                InputLabelProps={{ shrink: true }}
-                            />
-                            <TextField
-                                label="Dives before next service"
-                                id="diveInterval"
-                                name="diveInterval"
-                                type="number"
-                                required
-                                value={newGearItemServiceState.diveInterval}
-                                onChange={handleNumberInputs}
-                                fullWidth
-                            />
-                            <TextField
-                                label="Days before next service"
-                                id="dayInterval"
-                                name="dayInterval"
-                                type="number"
-                                required
-                                value={newGearItemServiceState.dayInterval}
-                                onChange={handleNumberInputs}
-                                fullWidth
-                            />
-                        </>
-                    )}
-                    <Button id="addGearBtn" type="submit" variant="contained" color="primary" size="large" sx={{ mt: 2 }}>
-                        Add Gear
-                    </Button>
-                </Box>
-            </Paper>
-        </Box>
+                            <Box component="form" onSubmit={handleSubmit} sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
+                                {gearTypeError && <Alert severity="error">Select 1 of gear type, custom gear type or add a new custom gear type.</Alert>}
+                                <FormControl fullWidth>
+                                    <InputLabel id="gearType-label">Gear Type</InputLabel>
+                                    <Select
+                                        labelId="gearType-label"
+                                        id="gearType"
+                                        name="gearType"
+                                        value={newGearItemFormState.gearTypeId || ""}
+                                        label="Gear Type"
+                                        onChange={handleGearTypeChange}
+                                    >
+                                        <MenuItem value="">Select Gear Type</MenuItem>
+                                        {gearTypes.map((gearType) => (
+                                            <MenuItem key={gearType.id} value={gearType.id}>
+                                                {gearType.name}
+                                            </MenuItem>
+                                        ))}
+                                    </Select>
+                                </FormControl>
+                                {customGearTypes.length > 0 && (
+                                    <FormControl fullWidth>
+                                        <InputLabel id="customGearType-label">Custom Gear Type</InputLabel>
+                                        <Select
+                                            labelId="customGearType-label"
+                                            id="customGearType"
+                                            name="customGearType"
+                                            value={newGearItemFormState.customGearTypeId || ""}
+                                            label="Custom Gear Type"
+                                            onChange={handleGearTypeChange}
+                                        >
+                                            <MenuItem value="">Select Custom Gear Type</MenuItem>
+                                            {customGearTypes.map((customGearType) => (
+                                                <MenuItem key={customGearType.id} value={customGearType.id}>
+                                                    {customGearType.name}
+                                                </MenuItem>
+                                            ))}
+                                        </Select>
+                                    </FormControl>
+                                )}
+                                <TextField
+                                    label="Add Custom Gear Type"
+                                    id="newCustomGearType"
+                                    name="newCustomGearType"
+                                    value={newGearItemFormState.newCustomGearType || ""}
+                                    onChange={handleNewCustomGearTypeInput}
+                                    fullWidth
+                                />
+                                <TextField label="Name" id="name" name="name" required value={newGearItemFormState.name} onChange={handleInput} fullWidth />
+                                <FormGroup>
+                                    <FormControlLabel control={<Checkbox checked={trackService} onChange={handleTrackServiceChange} />} label="Track Service" />
+                                </FormGroup>
+                                {trackService && (
+                                    <>
+                                        <Divider sx={{ my: 2 }} />
+                                        <Typography variant="h6" gutterBottom>
+                                            Service Tracking
+                                        </Typography>
+                                        <TextField
+                                            label="Purchase Date"
+                                            id="purchaseDate"
+                                            name="purchaseDate"
+                                            type="date"
+                                            required
+                                            inputProps={{ max: today }}
+                                            value={newGearItemServiceState.purchaseDate}
+                                            onChange={handleDateInputs}
+                                            fullWidth
+                                            InputLabelProps={{ shrink: true }}
+                                        />
+                                        <TextField
+                                            label="Last Serviced (optional)"
+                                            id="serviceDate"
+                                            name="serviceDate"
+                                            type="date"
+                                            inputProps={{ max: today }}
+                                            value={newGearItemServiceState.serviceDate}
+                                            onChange={handleDateInputs}
+                                            fullWidth
+                                            InputLabelProps={{ shrink: true }}
+                                        />
+                                        <TextField
+                                            label="Dives before next service"
+                                            id="diveInterval"
+                                            name="diveInterval"
+                                            type="number"
+                                            required
+                                            value={newGearItemServiceState.diveInterval}
+                                            onChange={handleNumberInputs}
+                                            fullWidth
+                                        />
+                                        <TextField
+                                            label="Days before next service"
+                                            id="dayInterval"
+                                            name="dayInterval"
+                                            type="number"
+                                            required
+                                            value={newGearItemServiceState.dayInterval}
+                                            onChange={handleNumberInputs}
+                                            fullWidth
+                                        />
+                                    </>
+                                )}
+                                <Button id="addGearBtn" type="submit" variant="contained" color="primary" size="large" sx={{ mt: 2 }}>
+                                    Add Gear
+                                </Button>
+                            </Box>
+                        </Paper>
+                        <ErrorNotification open={showAPIError} message={APIerror} onClose={handleCloseError} />
+                    </Box>
+                </>
+            )}
+        </>
     );
 }
 
