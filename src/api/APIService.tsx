@@ -1,8 +1,7 @@
 import axios, { AxiosResponse, AxiosError } from "axios";
 import { NavigateFunction } from "react-router-dom";
 
-export const BASE_URL = "http://localhost:8000";
-// export const BASE_URL = "https://surface-interval-server-931350853391.us-central1.run.app";
+export const BASE_URL = process.env.REACT_APP_BASE_URL;
 
 /* eslint-disable no-unused-vars */
 interface ErrorResponse {
