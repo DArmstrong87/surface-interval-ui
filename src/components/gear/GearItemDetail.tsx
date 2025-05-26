@@ -194,6 +194,9 @@ function GearItemDetail() {
                     <Typography variant="subtitle1" gutterBottom>
                         Type: {gearItem.gear_type?.name || gearItem.custom_gear_type?.name || "Unknown Type"}
                     </Typography>
+                    <Typography variant="subtitle1" gutterBottom>
+                        Dive count: {gearItem.dive_count}
+                    </Typography>
 
                     {/* Existing Service Tracking Section */}
                     <Divider sx={{ my: 2 }} />
