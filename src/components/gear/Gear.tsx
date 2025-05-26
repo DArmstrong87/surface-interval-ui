@@ -6,6 +6,7 @@ import { Box, Button, Typography, Paper, Table, TableBody, TableCell, TableConta
 import RandomSpinner from "../../RandomSpinner";
 import { loadingSpinnerTime } from "../Constants";
 import ErrorNotification from "../common/ErrorNotification";
+import InfoOutlineIcon from "@mui/icons-material/InfoOutline";
 
 function Gear() {
     const navigate = useNavigate();
@@ -139,9 +140,20 @@ function Gear() {
                     </TableContainer>
                 </Paper>
             ) : (
-                <Typography color="text.secondary" align="center">
-                    No gear items created.
-                </Typography>
+                <>
+                    <Typography color="text.secondary" align="center">
+                        No gear items created.
+                    </Typography>
+                    <Paper
+                        elevation={4}
+                        sx={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "space-between", p: 4, maxWidth: "80%", width: "100%", margin: "2rem auto" }}
+                    >
+                        <InfoOutlineIcon sx={{ fontSize: 40, mr: 2, color: "primary.main" }} />
+                        <Typography variant="body1" gutterBottom>
+                            Add your gear items using built-in or custom gear types. Then, add them to your gear set to track service dates and dive counts.
+                        </Typography>
+                    </Paper>
+                </>
             )}
             <ErrorNotification open={showAPIError} message={APIerror} onClose={handleCloseError} />
         </Box>

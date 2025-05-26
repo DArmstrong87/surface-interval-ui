@@ -94,6 +94,7 @@ export interface GearItem {
     days_since_last_service: number;
     due_for_service_days: number;
     due_for_service_dives: number;
+    dive_count: number;
 }
 
 export interface GearSet {
