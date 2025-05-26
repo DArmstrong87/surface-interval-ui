@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Container, Typography, Button, Paper, Box } from "@mui/material";
+import { Container, Typography, Button, Paper, Box, Alert, Snackbar } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import APIService from "../../api/APIService";
 import { Dives } from "../../interfaces";
@@ -12,6 +12,9 @@ function DiveLog() {
     const navigate = useNavigate();
     const [dives, setDives] = useState<Dives>([]);
     const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
+    const [showError, setShowError] = useState(false);
+
     const rows: GridRowsProp = dives;
     const columns: GridColDef[] = [
         { field: "dive_number", headerName: "Number", width: 100, flex: 1, minWidth: 100 },
@@ -50,12 +53,23 @@ function DiveLog() {
 
     useEffect(() => {
         const fetchData = async () => {
-            const [dives] = await Promise.all([APIService.fetchData<Dives>("/dives")]);
-            setDives(dives);
-            setTimeout(() => setLoading(false), loadingSpinnerTime);
+            try {
+                const [dives] = await Promise.all([APIService.fetchData<Dives>("/dives")]);
+                setDives(dives);
+                setError(null);
+            } catch (err) {
+                setError("Failed to load dive log. Please try again later.");
+                setShowError(true);
+            } finally {
+                setTimeout(() => setLoading(false), loadingSpinnerTime);
+            }
         };
         fetchData();
     }, []);
+
+    const handleCloseError = () => {
+        setShowError(false);
+    };
 
     if (loading) {
         return (
@@ -109,6 +123,11 @@ function DiveLog() {
                     />
                 </Paper>
             </Container>
+            <Snackbar open={showError} autoHideDuration={6000} onClose={handleCloseError} anchorOrigin={{ vertical: "top", horizontal: "center" }}>
+                <Alert onClose={handleCloseError} severity="error" sx={{ width: "100%" }}>
+                    {error}
+                </Alert>
+            </Snackbar>
         </>
     );
 }

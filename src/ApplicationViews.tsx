@@ -1,5 +1,6 @@
 import React from "react";
-import { Route, Routes } from "react-router-dom";
+import { Route, Routes, useNavigate } from "react-router-dom";
+import { Snackbar, Alert } from "@mui/material";
 import DiveLog from "./components/dives/Dives";
 import Gear from "./components/gear/Gear";
 import AddGear from "./components/gear/AddGear";
@@ -11,8 +12,26 @@ import DivePlanner from "./components/dive_planner/DivePlanner";
 import GearItemDetail from "./components/gear/GearItemDetail";
 import AddOrEditGearSet from "./components/gear/AddOrEditGearSet";
 import Profile from "./components/profile/Profile";
+import APIService from "./api/APIService";
 
 export const ApplicationViews = () => {
+    const navigate = useNavigate();
+    const [message, setMessage] = React.useState<string>("");
+    const [showMessage, setShowMessage] = React.useState(false);
+
+    React.useEffect(() => {
+        // Set up navigation and message handling
+        APIService.setNavigate(navigate);
+        APIService.setMessageHandler((msg: string) => {
+            setMessage(msg);
+            setShowMessage(true);
+        });
+    }, [navigate]);
+
+    const handleCloseMessage = () => {
+        setShowMessage(false);
+    };
+
     return (
         <>
             <Routes>
@@ -30,6 +49,11 @@ export const ApplicationViews = () => {
                     <Route path="/profile" Component={Profile} />
                 </Route>
             </Routes>
+            <Snackbar open={showMessage} autoHideDuration={6000} onClose={handleCloseMessage} anchorOrigin={{ vertical: "top", horizontal: "center" }}>
+                <Alert onClose={handleCloseMessage} severity="info" sx={{ width: "100%" }}>
+                    {message}
+                </Alert>
+            </Snackbar>
         </>
     );
 };
